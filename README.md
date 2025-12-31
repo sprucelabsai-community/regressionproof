@@ -6,14 +6,15 @@ A TypeScript tool for capturing code evolution through the TDD cycle, with the u
 
 ### Core Concept
 
-- CLI tool invoked by Spruce tooling after each test run
+- Programmatic library imported by Spruce CLI
+- Called directly after each test run (no CLI/subprocess overhead)
 - Syncs source code to an isolated mirror directory
 - Commits code + test metadata together, building a git history of TDD progression
 - This history becomes training data for LLMs
 
 ### Key Advantage
 
-Controlled environment (Spruce tooling) means we can make assumptions about project structure, test runners, output formats, etc.
+Controlled environment (Spruce CLI) means we can make assumptions about project structure, test runners, output formats, etc.
 
 ## Architecture Decisions
 
@@ -36,27 +37,27 @@ A snapshot is:
 
 ### How Do We Trigger Snapshots?
 
-Spruce tooling invokes the snapshotter CLI directly after each completed test run. No watcher/daemon needed - simpler and more reliable.
+Spruce CLI imports this package and calls `snapshot()` directly after each completed test run. No watcher/daemon needed - simpler and more reliable.
 
 **Flow:**
 1. Test run completes
-2. Spruce tooling writes metadata to a staging location
-3. Spruce tooling calls `snapshotter snapshot ...`
+2. Spruce CLI writes metadata to a staging location
+3. Spruce CLI calls `await snapshot({ ... })`
 4. Snapshotter syncs source files to mirror directory
 5. Snapshotter copies metadata into mirror (at `.snapshotter/metadata.json`)
 6. Snapshotter commits everything together
-7. Snapshotter exits
+7. Function returns
 
 - **Frequency**: Every completed test run
 - **Deduplication**: Handled naturally by git - if no code changed since last snapshot, nothing to commit
 
 This is a clean separation of concerns:
-- **Spruce tooling**: knows about tests, writes metadata, invokes snapshotter
+- **Spruce CLI**: knows about tests, writes metadata, calls snapshot()
 - **Snapshotter**: handles syncing, committing, history management
 
 ### Metadata File Format
 
-The metadata file is JSON, written by Spruce tooling on every completed test run. It gets copied into the mirror directory at `.snapshotter/metadata.json` and committed alongside the code, so each commit has both the code state and the test results that triggered it.
+The metadata file is JSON, written by Spruce CLI on every completed test run. It gets copied into the mirror directory at `.snapshotter/metadata.json` and committed alongside the code, so each commit has both the code state and the test results that triggered it.
 
 #### Schema
 
@@ -126,34 +127,31 @@ The metadata file is JSON, written by Spruce tooling on every completed test run
 
 ## Usage
 
-### CLI
+### Installation
 
 ```bash
-snapshotter snapshot [options]
+yarn add project-snapshotter
+```
+
+### API
+
+```typescript
+import { snapshot } from 'project-snapshotter'
+
+await snapshot({
+  source: '/path/to/project',  // optional, defaults to process.cwd()
+  mirror: '/path/to/mirror',   // required
+  metadata: '/tmp/test-results.json'  // required
+})
 ```
 
 ### Options
 
-| Flag | Required | Default | Description |
-|------|----------|---------|-------------|
-| `--source` | No | `process.cwd()` | Source project path to sync from |
-| `--mirror` | Yes | - | Mirror directory path (where the isolated git repo lives) |
-| `--metadata` | Yes | - | Path to metadata JSON file written by Spruce tooling |
-
-### Examples
-
-```bash
-# Common case - run from within the project directory
-snapshotter snapshot \
-  --mirror /path/to/mirror \
-  --metadata /tmp/test-results.json
-
-# Explicit source path
-snapshotter snapshot \
-  --source /path/to/project \
-  --mirror /path/to/mirror \
-  --metadata /tmp/test-results.json
-```
+| Option | Required | Default | Description |
+|--------|----------|---------|-------------|
+| `source` | No | `process.cwd()` | Source project path to sync from |
+| `mirror` | Yes | - | Mirror directory path (where the isolated git repo lives) |
+| `metadata` | Yes | - | Path to metadata JSON file written by Spruce CLI |
 
 ### What Happens
 
