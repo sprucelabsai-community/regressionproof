@@ -73,32 +73,34 @@ Snapshots are pushed to a self-hosted **Gitea** instance after each commit. This
 **Architecture:**
 
 ```
-Developer's machine          Our infrastructure
-┌─────────────────┐         ┌─────────────────┐
-│  Spruce CLI     │         │  Snapshot API   │
-│       ↓         │         │  (creates repos │
-│  Snapshotter    │ ←────── │   and tokens)   │
-│       ↓         │         └────────┬────────┘
-│  Push to Gitea  │ ──────────────→  │
-└─────────────────┘         ┌────────▼────────┐
-                            │     Gitea       │
-                            │  (self-hosted)  │
-                            └─────────────────┘
+Developer's machine                Our infrastructure
+┌──────────────────────┐          ┌─────────────────┐
+│  Spruce CLI          │          │  Snapshot API   │
+│    ↓                 │ ──────── │  (creates repos │
+│  (gets credentials)  │ ←─────── │   and tokens)   │
+│    ↓                 │          └────────┬────────┘
+│  Snapshotter         │                   │
+│    ↓                 │          ┌────────▼────────┐
+│  Push to Gitea       │ ───────→ │     Gitea       │
+└──────────────────────┘          │  (self-hosted)  │
+                                  └─────────────────┘
 ```
 
-**Snapshot API:**
+**Snapshot API** (future - separate from this library):
 - Hosted alongside Gitea
 - Holds the Gitea admin token securely (never exposed to developers)
-- Developers call it to register a project
+- Spruce CLI calls it to register a project
 - Creates a repo under the admin account
 - Generates a scoped token for that repo
-- Returns `{ url, token }` (used as `remote` option in [API](#api))
+- Returns `{ url, token }` to Spruce CLI
 
 **Flow:**
-1. Developer calls Snapshot API to register project → gets `{ url, token }`
-2. Snapshotter configured with these credentials (as `remote` option)
+1. Spruce CLI calls Snapshot API to register project → gets `{ url, token }`
+2. Spruce CLI passes credentials to snapshotter (as `remote` option - see [API](#api))
 3. After each snapshot commit, snapshotter pushes to Gitea
 4. All repos live under admin account for easy training data access
+
+**Note:** This library only handles snapshotting and pushing. Obtaining credentials is the responsibility of the caller (Spruce CLI).
 
 **Local Development:**
 ```bash
