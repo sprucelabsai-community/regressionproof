@@ -55,6 +55,53 @@ This is a clean separation of concerns:
 - **Spruce CLI**: knows about tests, writes metadata, calls snapshot()
 - **Snapshotter**: handles syncing, committing, history management
 
+### Git Hosting & Remote Push
+
+Snapshots are pushed to a self-hosted **Gitea** instance after each commit. This gives us full control over authentication and makes training data collection easy.
+
+**Why Gitea:**
+- Lightweight, easy to deploy (single binary or Docker)
+- Full API for creating repos and tokens
+- Self-hosted = full control, no third-party dependencies
+- All training data in one place under one admin account
+
+**Architecture:**
+
+```
+Developer's machine          Our infrastructure
+┌─────────────────┐         ┌─────────────────┐
+│  Spruce CLI     │         │  Snapshot API   │
+│       ↓         │         │  (creates repos │
+│  Snapshotter    │ ←────── │   and tokens)   │
+│       ↓         │         └────────┬────────┘
+│  Push to Gitea  │ ──────────────→  │
+└─────────────────┘         ┌────────▼────────┐
+                            │     Gitea       │
+                            │  (self-hosted)  │
+                            └─────────────────┘
+```
+
+**Snapshot API:**
+- Hosted alongside Gitea
+- Holds the Gitea admin token securely (never exposed to developers)
+- Developers call it to register a project
+- Creates a repo under the admin account
+- Generates a scoped token for that repo
+- Returns `{ repoUrl, token }` to the developer
+
+**Flow:**
+1. Developer calls Snapshot API to register project → gets `repoUrl` + `token`
+2. Snapshotter configured with these credentials
+3. After each snapshot commit, snapshotter pushes to Gitea
+4. All repos live under admin account for easy training data access
+
+**Local Development:**
+```bash
+# Boot local Gitea for testing
+./boot-git.sh
+# Opens at http://localhost:3333
+```
+
 ### Metadata File Format
 
 The metadata file is JSON, written by Spruce CLI on every completed test run. It gets copied into the mirror directory at `.snapshotter/metadata.json` and committed alongside the code, so each commit has both the code state and the test results that triggered it.
@@ -141,7 +188,11 @@ import { snapshot } from 'project-snapshotter'
 await snapshot({
   source: '/path/to/project',  // optional, defaults to process.cwd()
   mirror: '/path/to/mirror',   // required
-  metadata: '/tmp/test-results.json'  // required
+  metadata: '/tmp/test-results.json',  // required
+  remote: {
+    url: 'http://localhost:3333/admin/my-project.git',
+    token: 'gitea-token-here'
+  }
 })
 ```
 
@@ -152,13 +203,16 @@ await snapshot({
 | `source` | No | `process.cwd()` | Source project path to sync from |
 | `mirror` | Yes | - | Mirror directory path (where the isolated git repo lives) |
 | `metadata` | Yes | - | Path to metadata JSON file written by Spruce CLI |
+| `remote.url` | Yes | - | Gitea repo URL to push to |
+| `remote.token` | Yes | - | Gitea access token for authentication |
 
 ### What Happens
 
 1. Syncs source files to mirror directory (respects `.gitignore` if present, otherwise excludes `node_modules`, `build`)
 2. Copies metadata file to `.snapshotter/metadata.json` in mirror
 3. Commits all changes to the mirror's git repo
-4. If no changes since last snapshot, no commit is made
+4. Pushes to remote Gitea repo
+5. If no changes since last snapshot, no commit/push is made
 
 ## Security / Privacy
 
