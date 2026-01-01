@@ -32,10 +32,10 @@ A snapshot is:
    - Full history preserved for reconstruction
    - Completely isolated from the developer's repo/workflow
 
-3. **Include metadata** in the commit (at `.snapshotter/metadata.json`)
+3. **Include test results** in the commit (at `.snapshotter/testResults.json`)
    - Each commit contains both code state AND test results
    - Enables correlation when extracting training data later
-   - See [Metadata File Format](#metadata-file-format) for schema
+   - See [Test Results Format](#test-results-format) for schema
 
 4. **Push to remote** Gitea instance
    - See [Git Hosting & Remote Push](#git-hosting--remote-push) for details
@@ -46,10 +46,10 @@ Spruce CLI imports this package and calls `snapshot()` directly after each compl
 
 **Flow:**
 1. Test run completes
-2. Spruce CLI writes metadata to a staging location
-3. Spruce CLI calls `await snapshot({ ... })` (see [API](#api))
+2. Spruce CLI collects test results
+3. Spruce CLI calls `await snapshot({ testResults, ... })` (see [API](#api))
 4. Snapshotter syncs source files to mirror directory
-5. Snapshotter copies metadata into mirror (at `.snapshotter/metadata.json`)
+5. Snapshotter writes test results to mirror (at `.snapshotter/testResults.json`)
 6. Snapshotter commits everything together
 7. Snapshotter pushes to remote Gitea
 8. Function returns
@@ -110,9 +110,9 @@ Developer's machine                Our infrastructure
 # Opens at http://localhost:3333
 ```
 
-### Metadata File Format
+### Test Results Format
 
-The metadata file is JSON, written by Spruce CLI on every completed test run. It gets copied into the mirror directory at `.snapshotter/metadata.json` and committed alongside the code, so each commit has both the code state and the test results that triggered it.
+Test results are passed by Spruce CLI as an object on every completed test run. The snapshotter writes them to `.snapshotter/testResults.json` in the mirror directory and commits alongside the code, so each commit has both the code state and the test results that triggered it.
 
 #### Schema
 
@@ -196,7 +196,27 @@ import { snapshot } from 'project-snapshotter'
 await snapshot({
   sourcePath: '/path/to/project',  // optional, defaults to process.cwd()
   mirrorPath: '/path/to/mirror',   // required
-  metadataPath: '/tmp/test-results.json',  // required
+  testResults: {                    // required - see Test Results Format for schema
+    timestamp: new Date().toISOString(),
+    summary: {
+      totalSuites: 1,
+      passedSuites: 1,
+      failedSuites: 0,
+      totalTests: 2,
+      passedTests: 2,
+      failedTests: 0
+    },
+    suites: [
+      {
+        path: 'src/__tests__/Example.test.ts',
+        passed: true,
+        tests: [
+          { name: 'should work', passed: true },
+          { name: 'should also work', passed: true }
+        ]
+      }
+    ]
+  },
   remote: {
     url: 'http://localhost:3333/admin/my-project.git',
     token: 'gitea-token-here'
@@ -210,14 +230,14 @@ await snapshot({
 |--------|----------|---------|-------------|
 | `sourcePath` | No | `process.cwd()` | Source project path to sync from |
 | `mirrorPath` | Yes | - | Mirror directory path (where the isolated git repo lives) |
-| `metadataPath` | Yes | - | Path to metadata JSON file written by Spruce CLI (see [Metadata File Format](#metadata-file-format)) |
+| `testResults` | Yes | - | Test results object (see [Test Results Format](#test-results-format) for schema) |
 | `remote.url` | Yes | - | Gitea repo URL to push to |
 | `remote.token` | Yes | - | Gitea access token for authentication |
 
 ### What Happens
 
 1. Syncs source files to mirror directory (see [Security / Privacy](#security--privacy) for exclusions)
-2. Copies metadata file to `.snapshotter/metadata.json` in mirror
+2. Writes test results to `.snapshotter/testResults.json` in mirror
 3. Commits all changes to the mirror's git repo
 4. Pushes to remote Gitea repo
 5. If no changes since last snapshot, no commit/push is made
