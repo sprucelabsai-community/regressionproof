@@ -18,20 +18,20 @@ const DEFAULT_EXCLUDES = [
     '*.local',
 ]
 
-export async function syncFiles(source: string, mirror: string): Promise<void> {
-    const hasGitIgnore = existsSync(path.join(source, '.gitignore'))
+export async function syncFiles(
+    sourcePath: string,
+    mirrorPath: string
+): Promise<void> {
+    const hasGitIgnore = existsSync(path.join(sourcePath, '.gitignore'))
 
     if (hasGitIgnore) {
-        // Use git ls-files to get list of files respecting .gitignore
-        // Then pipe to rsync
-        const cmd = `cd "${source}" && git ls-files --cached --others --exclude-standard -z | rsync -av --files-from=- --from0 . "${mirror}/"`
+        const cmd = `cd "${sourcePath}" && git ls-files --cached --others --exclude-standard -z | rsync -av --files-from=- --from0 . "${mirrorPath}/"`
         await execAsync(cmd)
     } else {
-        // Use rsync with default excludes
         const excludes = DEFAULT_EXCLUDES.map((e) => `--exclude='${e}'`).join(
             ' '
         )
-        const cmd = `rsync -av --delete ${excludes} "${source}/" "${mirror}/"`
+        const cmd = `rsync -av --delete ${excludes} "${sourcePath}/" "${mirrorPath}/"`
         await execAsync(cmd)
     }
 }

@@ -34,6 +34,10 @@ A snapshot is:
 3. **Include metadata** in the commit (at `.snapshotter/metadata.json`)
    - Each commit contains both code state AND test results
    - Enables correlation when extracting training data later
+   - See [Metadata File Format](#metadata-file-format) for schema
+
+4. **Push to remote** Gitea instance
+   - See [Git Hosting & Remote Push](#git-hosting--remote-push) for details
 
 ### How Do We Trigger Snapshots?
 
@@ -42,11 +46,12 @@ Spruce CLI imports this package and calls `snapshot()` directly after each compl
 **Flow:**
 1. Test run completes
 2. Spruce CLI writes metadata to a staging location
-3. Spruce CLI calls `await snapshot({ ... })`
+3. Spruce CLI calls `await snapshot({ ... })` (see [API](#api))
 4. Snapshotter syncs source files to mirror directory
 5. Snapshotter copies metadata into mirror (at `.snapshotter/metadata.json`)
 6. Snapshotter commits everything together
-7. Function returns
+7. Snapshotter pushes to remote Gitea
+8. Function returns
 
 - **Frequency**: Every completed test run
 - **Deduplication**: Handled naturally by git - if no code changed since last snapshot, nothing to commit
@@ -87,11 +92,11 @@ Developer's machine          Our infrastructure
 - Developers call it to register a project
 - Creates a repo under the admin account
 - Generates a scoped token for that repo
-- Returns `{ repoUrl, token }` to the developer
+- Returns `{ url, token }` (used as `remote` option in [API](#api))
 
 **Flow:**
-1. Developer calls Snapshot API to register project → gets `repoUrl` + `token`
-2. Snapshotter configured with these credentials
+1. Developer calls Snapshot API to register project → gets `{ url, token }`
+2. Snapshotter configured with these credentials (as `remote` option)
 3. After each snapshot commit, snapshotter pushes to Gitea
 4. All repos live under admin account for easy training data access
 
@@ -186,9 +191,9 @@ yarn add project-snapshotter
 import { snapshot } from 'project-snapshotter'
 
 await snapshot({
-  source: '/path/to/project',  // optional, defaults to process.cwd()
-  mirror: '/path/to/mirror',   // required
-  metadata: '/tmp/test-results.json',  // required
+  sourcePath: '/path/to/project',  // optional, defaults to process.cwd()
+  mirrorPath: '/path/to/mirror',   // required
+  metadataPath: '/tmp/test-results.json',  // required
   remote: {
     url: 'http://localhost:3333/admin/my-project.git',
     token: 'gitea-token-here'
@@ -200,15 +205,15 @@ await snapshot({
 
 | Option | Required | Default | Description |
 |--------|----------|---------|-------------|
-| `source` | No | `process.cwd()` | Source project path to sync from |
-| `mirror` | Yes | - | Mirror directory path (where the isolated git repo lives) |
-| `metadata` | Yes | - | Path to metadata JSON file written by Spruce CLI |
+| `sourcePath` | No | `process.cwd()` | Source project path to sync from |
+| `mirrorPath` | Yes | - | Mirror directory path (where the isolated git repo lives) |
+| `metadataPath` | Yes | - | Path to metadata JSON file written by Spruce CLI (see [Metadata File Format](#metadata-file-format)) |
 | `remote.url` | Yes | - | Gitea repo URL to push to |
 | `remote.token` | Yes | - | Gitea access token for authentication |
 
 ### What Happens
 
-1. Syncs source files to mirror directory (respects `.gitignore` if present, otherwise excludes `node_modules`, `build`)
+1. Syncs source files to mirror directory (see [Security / Privacy](#security--privacy) for exclusions)
 2. Copies metadata file to `.snapshotter/metadata.json` in mirror
 3. Commits all changes to the mirror's git repo
 4. Pushes to remote Gitea repo
@@ -223,6 +228,8 @@ Snapshots are intended to become LLM training data, so we take care to avoid cap
 1. **Honor `.gitignore`** - If the source project has a `.gitignore`, we respect it via `git ls-files`
 
 2. **Default exclusions** - These patterns are always excluded, regardless of `.gitignore`:
+   - `node_modules` - Dependencies
+   - `build` - Build artifacts
    - `*.env*` - Environment files
    - `*.pem` - Certificates
    - `*.key` - Private keys
@@ -230,7 +237,6 @@ Snapshots are intended to become LLM training data, so we take care to avoid cap
    - `*.pfx` - PKCS12 keystores
    - `*credentials*` - Credential files
    - `*secret*` - Secret files
-   - `.env*` - Dotenv files
    - `*.local` - Local config overrides
 
 ### Developer Responsibility

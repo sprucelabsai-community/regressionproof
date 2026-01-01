@@ -1,22 +1,24 @@
 import { copyFileSync, mkdirSync } from 'fs'
 import path from 'path'
-import { gitCommit } from './git'
+import { gitCommit, gitPush } from './git'
 import { SnapshotOptions } from './snapshotter.types'
 import { syncFiles } from './sync'
 
 export async function snapshot(options: SnapshotOptions): Promise<boolean> {
-    const source = options.source ?? process.cwd()
-    const { mirror, metadata } = options
+    const sourcePath = options.sourcePath ?? process.cwd()
+    const { mirrorPath, metadataPath, remote } = options
 
-    // 1. Sync source files to mirror
-    await syncFiles(source, mirror)
+    await syncFiles(sourcePath, mirrorPath)
 
-    // 2. Copy metadata to .snapshotter/metadata.json
-    const snapshotterDir = path.join(mirror, '.snapshotter')
+    const snapshotterDir = path.join(mirrorPath, '.snapshotter')
     mkdirSync(snapshotterDir, { recursive: true })
-    copyFileSync(metadata, path.join(snapshotterDir, 'metadata.json'))
+    copyFileSync(metadataPath, path.join(snapshotterDir, 'metadata.json'))
 
-    // 3. Commit everything
-    const committed = await gitCommit(mirror)
+    const committed = await gitCommit(mirrorPath)
+
+    if (committed) {
+        await gitPush(mirrorPath, remote)
+    }
+
     return committed
 }

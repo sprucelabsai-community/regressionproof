@@ -2,28 +2,47 @@ import { exec } from 'child_process'
 import { existsSync } from 'fs'
 import path from 'path'
 import { promisify } from 'util'
+import { RemoteOptions } from './snapshotter.types'
 
 const execAsync = promisify(exec)
 
-export async function gitCommit(mirror: string): Promise<boolean> {
-    const gitDir = path.join(mirror, '.git')
+export async function gitCommit(mirrorPath: string): Promise<boolean> {
+    const gitDir = path.join(mirrorPath, '.git')
 
-    // Init repo if .git doesn't exist
     if (!existsSync(gitDir)) {
-        await execAsync(`git -C "${mirror}" init`)
+        await execAsync(`git -C "${mirrorPath}" init`)
     }
 
-    // Stage all changes
-    await execAsync(`git -C "${mirror}" add -A`)
+    await execAsync(`git -C "${mirrorPath}" add -A`)
 
-    // Check if there are changes to commit
-    const { stdout } = await execAsync(`git -C "${mirror}" status --porcelain`)
+    const { stdout } = await execAsync(
+        `git -C "${mirrorPath}" status --porcelain`
+    )
     if (!stdout.trim()) {
-        return false // nothing to commit
+        return false
     }
 
-    // Commit
     const message = `Snapshot ${new Date().toISOString()}`
-    await execAsync(`git -C "${mirror}" commit -m "${message}"`)
+    await execAsync(`git -C "${mirrorPath}" commit -m "${message}"`)
     return true
+}
+
+export async function gitPush(
+    mirrorPath: string,
+    remote: RemoteOptions
+): Promise<void> {
+    const authedUrl = remote.url.replace('://', `://${remote.token}@`)
+
+    try {
+        await execAsync(`git -C "${mirrorPath}" remote get-url origin`)
+        await execAsync(
+            `git -C "${mirrorPath}" remote set-url origin "${authedUrl}"`
+        )
+    } catch {
+        await execAsync(
+            `git -C "${mirrorPath}" remote add origin "${authedUrl}"`
+        )
+    }
+
+    await execAsync(`git -C "${mirrorPath}" push -u origin HEAD`)
 }
