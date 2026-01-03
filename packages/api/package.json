@@ -1,6 +1,8 @@
 {
   "name": "@regressionproof/api",
   "version": "0.0.1",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "scripts": {
     "build.ci": "yarn run build.tsc && yarn run build.resolve-paths && yarn run lint",
     "build.dev": "yarn run build.tsc --sourceMap ; yarn run resolve-paths.lint",
@@ -33,6 +35,9 @@
     "ts-node": "^10.9.2",
     "tsc-watch": "^7.2.0",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "fastify": "^5.0.0"
   },
   "description": "the api for managing snapshot repos",
   "skill": {

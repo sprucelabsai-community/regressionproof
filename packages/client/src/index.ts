@@ -1,1 +1,5 @@
-//exports go here
+export {
+    RegressionProofClient,
+    RegisterProjectOptions,
+    ProjectCredentials,
+} from './RegressionProofClient'

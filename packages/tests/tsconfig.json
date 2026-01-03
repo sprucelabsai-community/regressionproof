@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "sourceMap": false,
+    "outDir": "build",
+    "baseUrl": "src",
+    "paths": {
+      "#spruce/*": [
+        ".spruce/*"
+      ]
+    },
+    "experimentalDecorators": true
+  },
+  "include": [
+    "./src/*.ts",
+    "./src/**/*.ts",
+    "./src/.spruce/**/*"
+  ],
+  "exclude": [
+    "build",
+    "esm"
+  ]
+}

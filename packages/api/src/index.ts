@@ -1,1 +1,1 @@
-//exports go here
+export { RegressionProofApi } from './RegressionProofApi'
