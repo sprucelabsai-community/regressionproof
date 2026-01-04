@@ -24,15 +24,20 @@ export class RegressionProofApi {
     }
 
     private setupRoutes() {
-        this.server.post('/register', async (request, _reply) => {
+        this.server.post('/register', async (request, reply) => {
             const { name } = request.body as { name: string }
 
-            const url = `${this.giteaUrl}/${this.giteaAdminUser}/${name}.git`
-            const token = await this.createGiteaToken(name)
+            try {
+                const url = `${this.giteaUrl}/${this.giteaAdminUser}/${name}.git`
+                const token = await this.createGiteaToken(name)
 
-            this.projects.set(name, { url })
+                this.projects.set(name, { url })
 
-            return { url, token }
+                return { url, token }
+            } catch (err) {
+                void reply.status(502)
+                return { error: this.formatGitServerError(err) }
+            }
         })
 
         this.server.post('/refresh', async (request, reply) => {
@@ -44,10 +49,25 @@ export class RegressionProofApi {
                 return { error: 'Project not found' }
             }
 
-            const token = await this.createGiteaToken(name)
-
-            return { url: project.url, token }
+            try {
+                const token = await this.createGiteaToken(name)
+                return { url: project.url, token }
+            } catch (err) {
+                void reply.status(502)
+                return { error: this.formatGitServerError(err) }
+            }
         })
+    }
+
+    private formatGitServerError(err: unknown): string {
+        const message = err instanceof Error ? err.message : String(err)
+        if (
+            message.includes('ECONNREFUSED') ||
+            message.includes('fetch failed')
+        ) {
+            return `GIT_SERVER_UNAVAILABLE: Could not connect to git server at ${this.giteaUrl}`
+        }
+        return `GIT_SERVER_ERROR: ${message}`
     }
 
     private async createGiteaToken(name: string): Promise<string> {

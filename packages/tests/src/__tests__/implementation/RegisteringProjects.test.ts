@@ -87,6 +87,32 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
     }
 
     @test()
+    protected async registeringWithUnreachableGiteaReturnsHelpfulError() {
+        const badApi = new RegressionProofApi({
+            giteaUrl: 'http://localhost:9999',
+            giteaAdminUser: 'admin',
+            giteaAdminPassword: 'password',
+        })
+        await badApi.start()
+
+        const badClient = new RegressionProofClient(
+            `http://localhost:${badApi.getPort()}`
+        )
+
+        const err = await assert.doesThrowAsync(() =>
+            badClient.registerProject({ name: generateId() })
+        )
+
+        assert.doesInclude(
+            err.message,
+            'GIT_SERVER',
+            'Expected error message to mention git server'
+        )
+
+        await badApi.stop()
+    }
+
+    @test()
     protected async registeredTokenWorksWithGitea() {
         const name = generateId()
         const credentials = await this.registerProject(name)

@@ -26,8 +26,10 @@ export class RegressionProofClient {
         })
 
         if (!response.ok) {
+            const body = await this.parseErrorBody(response)
             throw new Error(
-                `Failed to register project: ${response.statusText}`
+                body.error ??
+                    `Failed to register project: ${response.statusText}`
             )
         }
 
@@ -46,11 +48,23 @@ export class RegressionProofClient {
         })
 
         if (!response.ok) {
+            const body = await this.parseErrorBody(response)
             throw new Error(
-                `Failed to refresh credentials: ${response.statusText}`
+                body.error ??
+                    `Failed to refresh credentials: ${response.statusText}`
             )
         }
 
         return response.json()
+    }
+
+    private async parseErrorBody(
+        response: Response
+    ): Promise<{ error?: string }> {
+        try {
+            return await response.json()
+        } catch {
+            return {}
+        }
     }
 }
