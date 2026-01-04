@@ -21,6 +21,11 @@ export default class RegressionProofApi {
         this.server.post('/register', async (request, reply) => {
             const { name } = request.body as { name: string }
 
+            if (this.projects.has(name)) {
+                void reply.status(409)
+                return { error: `Project '${name}' already exists` }
+            }
+
             try {
                 const url = `${this.giteaUrl}/${this.giteaAdminUser}/${name}.git`
                 const token = await this.createGiteaToken(name)

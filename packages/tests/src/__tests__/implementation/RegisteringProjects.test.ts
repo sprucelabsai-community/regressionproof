@@ -113,6 +113,23 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
     }
 
     @test()
+    protected async registeringDuplicateProjectThrows() {
+        const name = generateId()
+
+        await this.registerProject(name)
+
+        const err = await assert.doesThrowAsync(() =>
+            this.registerProject(name)
+        )
+
+        assert.doesInclude(
+            err.message,
+            'already exists',
+            'Expected error message to indicate project exists'
+        )
+    }
+
+    @test()
     protected async registeredTokenWorksWithGitea() {
         const name = generateId()
         const credentials = await this.registerProject(name)
