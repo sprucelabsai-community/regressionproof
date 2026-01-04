@@ -40,24 +40,16 @@ export default async function globalSetup() {
     // Create admin user (with retries since DB may not be fully ready)
     await createAdminUser()
 
-    // Create access token via API
-    const token = await createAdminToken()
-
-    // Store config for tests
-    process.env.GITEA_URL = GITEA_URL
-    process.env.GITEA_ADMIN_TOKEN = token
-    process.env.GITEA_ADMIN_USER = ADMIN_USER
-
-    // Write to file so tests can read it (globalSetup runs in separate process)
+    // Write .env file for tests (globalSetup runs in separate process)
     const fs = await import('fs')
+    const path = await import('path')
+    const envPath = path.resolve(__dirname, '../.env')
     fs.writeFileSync(
-        '/tmp/regressionproof-gitea-config.json',
-        JSON.stringify({
-            giteaUrl: GITEA_URL,
-            giteaAdminToken: token,
-            giteaAdminUser: ADMIN_USER,
-            giteaAdminPassword: ADMIN_PASSWORD,
-        })
+        envPath,
+        `GITEA_URL=${GITEA_URL}
+GITEA_ADMIN_USER=${ADMIN_USER}
+GITEA_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+`
     )
 
     console.log(`✅ Gitea ready at ${GITEA_URL}`)
@@ -96,30 +88,6 @@ async function waitForGitea(maxAttempts = 30): Promise<void> {
         await sleep(1000)
     }
     throw new Error('Gitea failed to start')
-}
-
-async function createAdminToken(): Promise<string> {
-    const response = await fetch(
-        `${GITEA_URL}/api/v1/users/${ADMIN_USER}/tokens`,
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Basic ${Buffer.from(`${ADMIN_USER}:${ADMIN_PASSWORD}`).toString('base64')}`,
-            },
-            body: JSON.stringify({
-                name: `test-token-${Date.now()}`,
-                scopes: ['all'],
-            }),
-        }
-    )
-
-    if (!response.ok) {
-        throw new Error(`Failed to create token: ${response.statusText}`)
-    }
-
-    const data = (await response.json()) as { sha1: string }
-    return data.sha1
 }
 
 function sleep(ms: number): Promise<void> {

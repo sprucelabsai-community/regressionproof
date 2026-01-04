@@ -1,4 +1,3 @@
-import fs from 'fs'
 import AbstractSpruceTest, {
     test,
     suite,
@@ -11,25 +10,18 @@ import {
     ProjectCredentials,
 } from '@regressionproof/client'
 
-interface GiteaConfig {
-    giteaUrl: string
-    giteaAdminToken: string
-    giteaAdminUser: string
-    giteaAdminPassword: string
-}
-
 @suite()
 export default class RegisteringProjectsTest extends AbstractSpruceTest {
     private static api: RegressionProofApi
-    private static giteaConfig: GiteaConfig
     private client!: RegressionProofClient
 
     protected static async beforeAll() {
         await super.beforeAll()
-        this.giteaConfig = JSON.parse(
-            fs.readFileSync('/tmp/regressionproof-gitea-config.json', 'utf-8')
-        )
-        this.api = new RegressionProofApi(this.giteaConfig)
+        this.api = new RegressionProofApi({
+            giteaUrl: process.env.GITEA_URL!,
+            giteaAdminUser: process.env.GITEA_ADMIN_USER!,
+            giteaAdminPassword: process.env.GITEA_ADMIN_PASSWORD!,
+        })
         await this.api.start()
     }
 
@@ -40,10 +32,6 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
 
     protected get api() {
         return RegisteringProjectsTest.api
-    }
-
-    protected get giteaConfig(): GiteaConfig {
-        return RegisteringProjectsTest.giteaConfig
     }
 
     protected async beforeEach() {
@@ -103,12 +91,9 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
         const name = generateId()
         const credentials = await this.registerProject(name)
 
-        const response = await fetch(
-            `${this.giteaConfig.giteaUrl}/api/v1/user`,
-            {
-                headers: { Authorization: `token ${credentials.token}` },
-            }
-        )
+        const response = await fetch(`${process.env.GITEA_URL}/api/v1/user`, {
+            headers: { Authorization: `token ${credentials.token}` },
+        })
 
         assert.isEqual(
             response.status,
