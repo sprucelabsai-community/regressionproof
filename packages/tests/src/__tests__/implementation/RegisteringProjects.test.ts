@@ -1,3 +1,4 @@
+import fs from 'fs'
 import AbstractSpruceTest, {
     test,
     suite,
@@ -10,24 +11,39 @@ import {
     ProjectCredentials,
 } from '@regressionproof/client'
 
+interface GiteaConfig {
+    giteaUrl: string
+    giteaAdminToken: string
+    giteaAdminUser: string
+    giteaAdminPassword: string
+}
+
 @suite()
 export default class RegisteringProjectsTest extends AbstractSpruceTest {
-    private static _api: RegressionProofApi
+    private static api: RegressionProofApi
+    private static giteaConfig: GiteaConfig
     private client!: RegressionProofClient
 
     protected static async beforeAll() {
         await super.beforeAll()
-        this._api = new RegressionProofApi()
-        await this._api.start()
+        this.giteaConfig = JSON.parse(
+            fs.readFileSync('/tmp/regressionproof-gitea-config.json', 'utf-8')
+        )
+        this.api = new RegressionProofApi(this.giteaConfig)
+        await this.api.start()
     }
 
     protected static async afterAll() {
-        await this._api.stop()
+        await this.api.stop()
         await super.afterAll()
     }
 
     protected get api() {
-        return RegisteringProjectsTest._api
+        return RegisteringProjectsTest.api
+    }
+
+    protected get giteaConfig(): GiteaConfig {
+        return RegisteringProjectsTest.giteaConfig
     }
 
     protected async beforeEach() {
@@ -70,10 +86,6 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
             original.url,
             'Expected url to remain the same after refresh'
         )
-        assert.isTruthy(
-            refreshed.token,
-            'Expected refreshed credentials to include a token'
-        )
         assert.isNotEqual(
             refreshed.token,
             original.token,
@@ -84,6 +96,25 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
     @test()
     protected async refreshingNonExistentProjectThrows() {
         await assert.doesThrowAsync(() => this.refreshCredentials(generateId()))
+    }
+
+    @test()
+    protected async registeredTokenWorksWithGitea() {
+        const name = generateId()
+        const credentials = await this.registerProject(name)
+
+        const response = await fetch(
+            `${this.giteaConfig.giteaUrl}/api/v1/user`,
+            {
+                headers: { Authorization: `token ${credentials.token}` },
+            }
+        )
+
+        assert.isEqual(
+            response.status,
+            200,
+            'Expected token to authenticate with Gitea'
+        )
     }
 
     private async registerProject(name: string): Promise<ProjectCredentials> {

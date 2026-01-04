@@ -1,1 +1,4 @@
-export { RegressionProofApi } from './RegressionProofApi'
+export {
+    RegressionProofApi,
+    RegressionProofApiOptions,
+} from './RegressionProofApi'

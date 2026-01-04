@@ -52,6 +52,8 @@
     "maxWorkers": 4,
     "testTimeout": 120000,
     "testEnvironment": "node",
+    "globalSetup": "<rootDir>/build/jest.setup.js",
+    "globalTeardown": "<rootDir>/build/jest.teardown.js",
     "testPathIgnorePatterns": [
       "<rootDir>/tmp/",
       "<rootDir>/src/",

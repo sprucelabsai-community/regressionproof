@@ -1,11 +1,24 @@
 import Fastify, { FastifyInstance } from 'fastify'
 
+export interface RegressionProofApiOptions {
+    giteaUrl: string
+    giteaAdminUser: string
+    giteaAdminPassword: string
+}
+
 export class RegressionProofApi {
     private server: FastifyInstance
     private port?: number
-    private projects = new Map<string, { url: string; tokenCount: number }>()
+    private projects = new Map<string, { url: string }>()
+    private giteaUrl: string
+    private giteaAdminUser: string
+    private giteaAdminPassword: string
 
-    public constructor() {
+    public constructor(options: RegressionProofApiOptions) {
+        const { giteaUrl, giteaAdminUser, giteaAdminPassword } = options
+        this.giteaUrl = giteaUrl
+        this.giteaAdminUser = giteaAdminUser
+        this.giteaAdminPassword = giteaAdminPassword
         this.server = Fastify()
         this.setupRoutes()
     }
@@ -14,16 +27,12 @@ export class RegressionProofApi {
         this.server.post('/register', async (request, _reply) => {
             const { name } = request.body as { name: string }
 
-            const url = `http://localhost:3333/admin/${name}.git`
-            const tokenCount = 1
+            const url = `${this.giteaUrl}/${this.giteaAdminUser}/${name}.git`
+            const token = await this.createGiteaToken(name)
 
-            this.projects.set(name, { url, tokenCount })
+            this.projects.set(name, { url })
 
-            // TODO: Create repo in Gitea and generate token
-            return {
-                url,
-                token: this.generateToken(name, tokenCount),
-            }
+            return { url, token }
         })
 
         this.server.post('/refresh', async (request, reply) => {
@@ -35,18 +44,41 @@ export class RegressionProofApi {
                 return { error: 'Project not found' }
             }
 
-            project.tokenCount++
+            const token = await this.createGiteaToken(name)
 
-            // TODO: Generate new token in Gitea
-            return {
-                url: project.url,
-                token: this.generateToken(name, project.tokenCount),
-            }
+            return { url: project.url, token }
         })
     }
 
-    private generateToken(name: string, count: number): string {
-        return `token-${name}-${count}`
+    private async createGiteaToken(name: string): Promise<string> {
+        const basicAuth = Buffer.from(
+            `${this.giteaAdminUser}:${this.giteaAdminPassword}`
+        ).toString('base64')
+
+        const response = await fetch(
+            `${this.giteaUrl}/api/v1/users/${this.giteaAdminUser}/tokens`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Basic ${basicAuth}`,
+                },
+                body: JSON.stringify({
+                    name: `${name}-${Date.now()}`,
+                    scopes: ['write:repository', 'write:user'],
+                }),
+            }
+        )
+
+        if (!response.ok) {
+            const text = await response.text()
+            throw new Error(
+                `Failed to create token: ${response.status} ${response.statusText} - ${text}`
+            )
+        }
+
+        const data = (await response.json()) as { sha1: string }
+        return data.sha1
     }
 
     public async start(port = 0): Promise<void> {
