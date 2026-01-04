@@ -1,12 +1,6 @@
 import Fastify, { FastifyInstance } from 'fastify'
 
-export interface RegressionProofApiOptions {
-    giteaUrl: string
-    giteaAdminUser: string
-    giteaAdminPassword: string
-}
-
-export class RegressionProofApi {
+export default class RegressionProofApi {
     private server: FastifyInstance
     private port?: number
     private projects = new Map<string, { url: string }>()
@@ -118,4 +112,10 @@ export class RegressionProofApi {
         }
         return this.port
     }
+}
+
+export interface RegressionProofApiOptions {
+    giteaUrl: string
+    giteaAdminUser: string
+    giteaAdminPassword: string
 }

@@ -1,5 +1,5 @@
+export { default as RegressionProofClient } from './RegressionProofClient'
 export {
-    RegressionProofClient,
     RegisterProjectOptions,
     ProjectCredentials,
 } from './RegressionProofClient'

@@ -2,7 +2,7 @@
 
 # Boot a local Gitea instance for snapshot testing
 
-CONTAINER_NAME="snapshotter-gitea"
+CONTAINER_NAME="regressionproof-gitea"
 HTTP_LISTEN_PORT=3333
 SSH_SERVER_PORT=2222
 BASE_URL="http://localhost:${HTTP_LISTEN_PORT}"
@@ -25,7 +25,7 @@ else
         --name "${CONTAINER_NAME}" \
         -p "${HTTP_LISTEN_PORT}:3000" \
         -p "${SSH_SERVER_PORT}:22" \
-        -v gitea-snapshotter-data:/data \
+        -v regressionproof-data:/data \
         gitea/gitea:latest
 
     echo "Gitea started at ${BASE_URL}"

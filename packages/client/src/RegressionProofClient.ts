@@ -1,13 +1,4 @@
-export interface RegisterProjectOptions {
-    name: string
-}
-
-export interface ProjectCredentials {
-    url: string
-    token: string
-}
-
-export class RegressionProofClient {
+export default class RegressionProofClient {
     private baseUrl: string
 
     public constructor(baseUrl: string) {
@@ -67,4 +58,13 @@ export class RegressionProofClient {
             return {}
         }
     }
+}
+
+export interface RegisterProjectOptions {
+    name: string
+}
+
+export interface ProjectCredentials {
+    url: string
+    token: string
 }
