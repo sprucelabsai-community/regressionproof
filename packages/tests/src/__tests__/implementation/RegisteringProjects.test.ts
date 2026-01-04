@@ -62,17 +62,10 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
         const name = generateId()
         await this.registerProject(name)
 
-        const secondApi = new RegressionProofApi({
-            giteaUrl: process.env.GITEA_URL!,
-            giteaAdminUser: process.env.GITEA_ADMIN_USER!,
-            giteaAdminPassword: process.env.GITEA_ADMIN_PASSWORD!,
-        })
+        const secondApi = this.Api()
         await secondApi.start()
 
-        const secondClient = new RegressionProofClient(
-            `http://localhost:${secondApi.getPort()}`
-        )
-
+        const secondClient = this.Client(secondApi)
         const isAvailable = await secondClient.checkNameAvailability(name)
         assert.isFalse(isAvailable, 'Name should not be available in second API instance')
 
@@ -121,29 +114,16 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
 
     @test()
     protected async refreshingNonExistentProjectThrows() {
-        const name = generateId()
-
-        const err = await assert.doesThrowAsync(() =>
-            this.refreshCredentials(name)
-        )
-
-        errorAssert.assertError(err, 'PROJECT_NOT_FOUND', { name })
+        await this.assertThrowsProjectNotFound(generateId())
     }
 
     @test()
     protected async registeringWithUnreachableGiteaReturnsHelpfulError() {
         const url = 'http://localhost:9999'
-        const badApi = new RegressionProofApi({
-            giteaUrl: url,
-            giteaAdminUser: 'admin',
-            giteaAdminPassword: 'password',
-        })
+        const badApi = this.Api({ giteaUrl: url })
         await badApi.start()
 
-        const badClient = new RegressionProofClient(
-            `http://localhost:${badApi.getPort()}`
-        )
-
+        const badClient = this.Client(badApi)
         const err = await assert.doesThrowAsync(() =>
             badClient.registerProject({ name: generateId() })
         )
@@ -156,14 +136,8 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
     @test()
     protected async registeringDuplicateProjectThrows() {
         const name = generateId()
-
         await this.registerProject(name)
-
-        const err = await assert.doesThrowAsync(() =>
-            this.registerProject(name)
-        )
-
-        errorAssert.assertError(err, 'PROJECT_ALREADY_EXISTS', { name })
+        await this.assertThrowsProjectAlreadyExists(name)
     }
 
     @test()
@@ -194,5 +168,37 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
         name: string
     ): Promise<ProjectCredentials> {
         return this.client.refreshCredentials({ name })
+    }
+
+    private async assertThrowsProjectNotFound(name: string): Promise<void> {
+        const err = await assert.doesThrowAsync(() =>
+            this.refreshCredentials(name)
+        )
+        errorAssert.assertError(err, 'PROJECT_NOT_FOUND', { name })
+    }
+
+    private async assertThrowsProjectAlreadyExists(name: string): Promise<void> {
+        const err = await assert.doesThrowAsync(() =>
+            this.registerProject(name)
+        )
+        errorAssert.assertError(err, 'PROJECT_ALREADY_EXISTS', { name })
+    }
+
+    private Api(
+        options?: Partial<{
+            giteaUrl: string
+            giteaAdminUser: string
+            giteaAdminPassword: string
+        }>
+    ): RegressionProofApi {
+        return new RegressionProofApi({
+            giteaUrl: options?.giteaUrl ?? process.env.GITEA_URL!,
+            giteaAdminUser: options?.giteaAdminUser ?? process.env.GITEA_ADMIN_USER!,
+            giteaAdminPassword: options?.giteaAdminPassword ?? process.env.GITEA_ADMIN_PASSWORD!,
+        })
+    }
+
+    private Client(api: RegressionProofApi): RegressionProofClient {
+        return new RegressionProofClient(`http://localhost:${api.getPort()}`)
     }
 }
