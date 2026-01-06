@@ -17,7 +17,7 @@
     "clean.all": "yarn run clean.dependencies && yarn run clean.build",
     "clean.build": "rm -rf build/",
     "clean.dependencies": "rm -rf node_modules/ package-lock.json yarn.lock",
-    "fix.lint": "eslint --fix --cache '**/*.ts'",
+    "fix.lint": "eslint --fix --cache '**/*.ts[x]'",
     "lint": "eslint --cache '**/*.ts'",
     "lint.tsc": "tsc -p . --noEmit",
     "post.watch.build": "yarn run build.copy-files && yarn run build.resolve-paths",
@@ -32,6 +32,7 @@
   "dependencies": {
     "@regressionproof/client": "^0.0.1",
     "ink": "^5.1.0",
+    "ink-big-text": "^2.0.0",
     "react": "^18.3.1"
   },
   "devDependencies": {
