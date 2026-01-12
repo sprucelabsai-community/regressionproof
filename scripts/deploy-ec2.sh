@@ -58,7 +58,7 @@ else
     git -C "$ROOT_DIR" pull
 fi
 
-mkdir -p "$ROOT_DIR/nginx"
+mkdir -p "$ROOT_DIR/nginx/certs"
 
 cat > "$ROOT_DIR/nginx/nginx.conf" <<EOF
 events {}
@@ -67,6 +67,20 @@ http {
   server {
     listen 80;
     server_name ${API_DOMAIN};
+    return 301 https://\$host\$request_uri;
+  }
+
+  server {
+    listen 80;
+    server_name ${GIT_DOMAIN};
+    return 301 https://\$host\$request_uri;
+  }
+
+  server {
+    listen 443 ssl;
+    server_name ${API_DOMAIN};
+    ssl_certificate /etc/nginx/certs/origin.pem;
+    ssl_certificate_key /etc/nginx/certs/origin.key;
     location / {
       proxy_pass http://api:3000;
       proxy_set_header Host \$host;
@@ -77,8 +91,10 @@ http {
   }
 
   server {
-    listen 80;
+    listen 443 ssl;
     server_name ${GIT_DOMAIN};
+    ssl_certificate /etc/nginx/certs/origin.pem;
+    ssl_certificate_key /etc/nginx/certs/origin.key;
     location / {
       proxy_pass http://gitea:3000;
       proxy_set_header Host \$host;
@@ -131,8 +147,10 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
     depends_on:
       - api
       - gitea
@@ -145,6 +163,14 @@ networks:
 EOF
 
 cd "$ROOT_DIR"
+
+if [ ! -f "$ROOT_DIR/nginx/certs/origin.pem" ] || [ ! -f "$ROOT_DIR/nginx/certs/origin.key" ]; then
+    echo "Missing Cloudflare Origin Certs."
+    echo "Place certs at:"
+    echo "  $ROOT_DIR/nginx/certs/origin.pem"
+    echo "  $ROOT_DIR/nginx/certs/origin.key"
+    exit 1
+fi
 
 if docker compose version >/dev/null 2>&1; then
     docker compose up -d --build

@@ -12,6 +12,13 @@ On a fresh EC2 instance, you can run the bootstrap script:
 curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/deploy-ec2.sh | bash
 ```
 
+Before running the script, place your Cloudflare Origin Certificate at:
+
+```
+~/regressionproof/nginx/certs/origin.pem
+~/regressionproof/nginx/certs/origin.key
+```
+
 Set custom domains or repo URL:
 
 ```bash
@@ -24,16 +31,23 @@ bash scripts/deploy-ec2.sh
 ### 1) DNS (Cloudflare)
 - Create `api` and `git` records pointing to the EC2 public IP.
 - Proxy status: **Proxied** (orange cloud).
-- SSL/TLS: **Full** (or **Full (strict)** if you install an origin cert).
+- SSL/TLS: **Full (strict)** with a Cloudflare Origin Cert.
 
-### 2) EC2 Instance
+### 2) Cloudflare Origin Cert
+- In Cloudflare, generate an Origin Certificate for `api.regressionproof.ai` and
+  `git.regressionproof.ai`.
+- Save the cert and key as:
+  - `~/regressionproof/nginx/certs/origin.pem`
+  - `~/regressionproof/nginx/certs/origin.key`
+
+### 3) EC2 Instance
 - Ubuntu 22.04 LTS
 - Security group inbound:
   - 22 (SSH)
   - 80 (HTTP)
   - 443 (HTTPS)
 
-### 3) Install Docker
+### 4) Install Docker
 ```bash
 sudo apt update
 sudo apt install -y docker.io docker-compose
@@ -41,12 +55,12 @@ sudo usermod -aG docker $USER
 ```
 Log out and back in to refresh group permissions.
 
-### 4) Directory Layout
+### 5) Directory Layout
 ```bash
 mkdir -p ~/regressionproof/{api,gitea,nginx}
 ```
 
-### 5) Docker Compose
+### 6) Docker Compose
 Create `~/regressionproof/docker-compose.yml`:
 
 ```yaml
@@ -90,6 +104,7 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/certs:/etc/nginx/certs:ro
@@ -104,7 +119,7 @@ networks:
     driver: bridge
 ```
 
-### 6) Nginx Config
+### 7) Nginx Config
 Create `~/regressionproof/nginx/nginx.conf`:
 
 ```nginx
@@ -114,6 +129,20 @@ http {
   server {
     listen 80;
     server_name api.regressionproof.ai;
+    return 301 https://$host$request_uri;
+  }
+
+  server {
+    listen 80;
+    server_name git.regressionproof.ai;
+    return 301 https://$host$request_uri;
+  }
+
+  server {
+    listen 443 ssl;
+    server_name api.regressionproof.ai;
+    ssl_certificate /etc/nginx/certs/origin.pem;
+    ssl_certificate_key /etc/nginx/certs/origin.key;
     location / {
       proxy_pass http://api:3000;
       proxy_set_header Host $host;
@@ -124,8 +153,10 @@ http {
   }
 
   server {
-    listen 80;
+    listen 443 ssl;
     server_name git.regressionproof.ai;
+    ssl_certificate /etc/nginx/certs/origin.pem;
+    ssl_certificate_key /etc/nginx/certs/origin.key;
     location / {
       proxy_pass http://gitea:3000;
       proxy_set_header Host $host;
@@ -137,20 +168,19 @@ http {
 }
 ```
 
-If you want HTTPS at the origin, place certs in `~/regressionproof/nginx/certs`
-and expand the Nginx config accordingly.
+Ensure the Cloudflare Origin Cert is present before starting the stack.
 
-### 7) Launch
+### 8) Launch
 ```bash
 cd ~/regressionproof
 docker-compose up -d
 ```
 
-### 8) Gitea Setup
+### 9) Gitea Setup
 - Visit `https://git.regressionproof.ai`.
 - Complete the admin setup wizard.
 
-### 9) Verify API
+### 10) Verify API
 ```bash
 curl https://api.regressionproof.ai/check-name/test
 ```
