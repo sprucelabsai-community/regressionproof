@@ -1,4 +1,4 @@
-# Claude Code SOP
+# Agent SOPs
 
 ## Coding Workflow
 
@@ -14,3 +14,16 @@ Commit messages must follow semver intent for CI/CD:
 - `patch: {detailed description of changes}` for immaterial behavior changes
 - `minor: {detailed description of changes}` for new features
 - `major: {detailed description of changes}` for breaking changes
+
+## Planning Principles
+
+- Plans describe discrete, concrete mutations to code/config.
+- One step maps to one conceptual change set; split unrelated changes.
+- Each step is proposed, approved, then executed before moving on.
+- If scope changes mid-stream, update the plan with a brief reason before proceeding.
+
+## Replanning Principles
+
+- When plans change, reprint the full plan with status markers.
+- Mark completed steps as checked off, removed steps as crossed out, and new steps as highlighted.
+- Always explain why the plan changed before continuing.

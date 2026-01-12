@@ -127,17 +127,37 @@ Check http://localhost:3333 for snapshots (admin / devpassword123).
 
 ## Deploy (EC2)
 
-Before running the script, create a Cloudflare Origin Certificate for
-`api.regressionproof.ai` and `git.regressionproof.ai`, then save it on the
-instance at:
+Follow these steps in order:
+
+1. **DNS records** (Cloudflare → DNS):
+   - `api` → EC2 public IP (A record, proxied)
+   - `git` → EC2 public IP (A record, proxied)
+2. **SSL/TLS mode** (Cloudflare → SSL/TLS): set to **Full (strict)**.
+3. **Origin cert** (Cloudflare → SSL/TLS → Origin Server):
+   - Create an Origin Certificate for `api.<your-domain>` and `git.<your-domain>`.
+   - Save the cert + key on the EC2 instance:
 
 ```
 ~/regressionproof/nginx/certs/origin.pem
 ~/regressionproof/nginx/certs/origin.key
 ```
 
-Bootstrap the API + Gitea stack on a fresh EC2 instance:
+4. **Bootstrap the API + Gitea stack**:
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/deploy-ec2.sh | bash
+```
+
+To see available options, run:
+
+```bash
+bash scripts/deploy-ec2.sh --help
+```
+
+To customize domains, set env vars before running the script:
+
+```bash
+API_DOMAIN=api.<your-domain> \
+GIT_DOMAIN=git.<your-domain> \
 curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/deploy-ec2.sh | bash
 ```
