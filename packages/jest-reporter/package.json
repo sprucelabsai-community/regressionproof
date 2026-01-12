@@ -1,6 +1,6 @@
 {
   "name": "@regressionproof/jest-reporter",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "publishConfig": {
     "access": "public"
   },
@@ -45,7 +45,7 @@
     "watch.tsc": "tsc -w"
   },
   "dependencies": {
-    "@regressionproof/snapshotter": "^0.2.16"
+    "@regressionproof/snapshotter": "^0.2.17"
   },
   "devDependencies": {
     "@jest/reporters": "^30.2.0",
