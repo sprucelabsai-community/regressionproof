@@ -2,8 +2,23 @@
 
 set -euo pipefail
 
+SCRIPT_VERSION="0.2.9"
+LAST_CHANGES=(
+    "Add force mode for non-interactive resets"
+    "Use sudo fallback when removing Gitea data"
+    "Display script version and recent changes"
+)
 ROOT_DIR="${ROOT_DIR:-$HOME/regressionproof}"
 FORCE="${FORCE:-false}"
+
+echo "=============================================="
+echo "regressionproof.ai reset"
+echo "Version: ${SCRIPT_VERSION}"
+echo "Last 3 Changes:"
+for change in "${LAST_CHANGES[@]}"; do
+    echo "- ${change}"
+done
+echo "=============================================="
 
 if [ "${1:-}" = "--force" ]; then
     FORCE=true
