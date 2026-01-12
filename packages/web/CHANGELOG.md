@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.2.23](https://github.com/sprucelabsai-community/regressionproof/compare/v0.2.22...v0.2.23) (2026-01-12)
+
+**Note:** Version bump only for package @regressionproof/web
+
+
+
+
+
 ## [0.2.22](https://github.com/sprucelabsai-community/regressionproof/compare/v0.2.21...v0.2.22) (2026-01-12)
 
 **Note:** Version bump only for package @regressionproof/web
