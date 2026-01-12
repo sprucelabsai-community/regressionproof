@@ -1,7 +1,7 @@
 {
   "name": "@regressionproof/web",
   "private": true,
-  "version": "0.2.20",
+  "version": "0.2.21",
   "description": "Marketing website for regressionproof.ai",
   "scripts": {
     "serve": "npx serve .",
