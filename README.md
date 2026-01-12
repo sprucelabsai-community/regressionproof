@@ -81,7 +81,6 @@ For contributors working on regressionproof itself.
 
 ```bash
 yarn install
-yarn build
 yarn setup.e2e   # Boots Gitea + API, links packages
 ```
 
