@@ -154,8 +154,8 @@ export default class RegressionProofApi {
         return data.sha1
     }
 
-    public async start(port = 0): Promise<void> {
-        await this.server.listen({ port })
+    public async start(port = 0, host?: string): Promise<void> {
+        await this.server.listen({ port, host })
         const address = this.server.addresses()[0]
         this.port =
             typeof address === 'string' ? parseInt(address) : address.port

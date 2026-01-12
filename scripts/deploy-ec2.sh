@@ -231,6 +231,7 @@ services:
       - NODE_ENV=production
       - GITEA_URL=http://gitea:3000
       - API_PORT=3000
+      - API_HOST=0.0.0.0
     env_file:
       - ./.regressionproof.env
     depends_on:
