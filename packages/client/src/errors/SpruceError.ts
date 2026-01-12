@@ -8,8 +8,9 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
         let message
         switch (options?.code) {
             case 'GIT_SERVER_ERROR':
-                message = `A request to the Git server failed: ${options.statusText}!`
+                message = `A request to the Git server failed: ${options.message}!`
                 break
+
             default:
                 message = super.friendlyMessage()
         }

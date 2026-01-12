@@ -8,19 +8,19 @@ export default class SpruceError extends BaseSpruceError<ErrorOptions> {
         let message
         switch (options?.code) {
             case 'PROJECT_ALREADY_EXISTS':
-                message = `Project '${options.name}' already exists!`
+                message = `A project named '${options.name}' already exists on the Git server. Choose a different name or refresh credentials.`
                 break
 
             case 'PROJECT_NOT_FOUND':
-                message = `Project '${options.name}' was not found!`
+                message = `Project '${options.name}' was not found on the Git server. Check the name or register the project first.`
                 break
 
             case 'GIT_SERVER_UNAVAILABLE':
-                message = `Could not connect to git server at ${options.url}`
+                message = `Could not connect to the Git server at ${options.url}. Check the URL, network connectivity, and server availability.`
                 break
 
             case 'GIT_SERVER_ERROR':
-                message = `Git server error: ${options.message}`
+                message = `Git server error while processing the request: ${options.message}`
                 break
 
             default:

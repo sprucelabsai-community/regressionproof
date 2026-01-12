@@ -11,7 +11,7 @@ export declare namespace SpruceErrors.RegressionproofClient {
 	export interface GitServerError {
 		
 			
-			'statusText': string
+			'message': string
 	}
 
 	export interface GitServerErrorSchema extends SpruceSchema.Schema {
@@ -20,7 +20,7 @@ export declare namespace SpruceErrors.RegressionproofClient {
 		name: 'git server error',
 		    fields: {
 		            /** . */
-		            'statusText': {
+		            'message': {
 		                type: 'text',
 		                isRequired: true,
 		                options: undefined

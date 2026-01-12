@@ -9,7 +9,7 @@ const gitServerErrorSchema: SpruceErrors.RegressionproofClient.GitServerErrorSch
 	name: 'git server error',
 	    fields: {
 	            /** . */
-	            'statusText': {
+	            'message': {
 	                type: 'text',
 	                isRequired: true,
 	                options: undefined

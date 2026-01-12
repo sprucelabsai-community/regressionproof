@@ -4,7 +4,7 @@ export default buildErrorSchema({
     id: 'gitServerError',
     name: 'git server error',
     fields: {
-        statusText: {
+        message: {
             type: 'text',
             isRequired: true,
         },
