@@ -391,6 +391,38 @@ echo "Service checks:"
 check_service "Gitea" "http://gitea:3000"
 check_service "API" "http://api:3000/check-name/test"
 
+setup_systemd() {
+    local unit_path="/etc/systemd/system/regressionproof.service"
+
+    sudo tee "$unit_path" >/dev/null <<EOF
+[Unit]
+Description=RegressionProof Docker Compose
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=${ROOT_DIR}
+ExecStart=/usr/bin/docker compose up -d
+ExecStop=/usr/bin/docker compose down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    sudo systemctl daemon-reload
+    sudo systemctl enable regressionproof.service
+    sudo systemctl start regressionproof.service
+    echo "Systemd unit installed and enabled: regressionproof.service"
+}
+
+read -r -p "Set up systemd to start RegressionProof on boot? (y/N): " enable_systemd
+if [ "${enable_systemd}" = "y" ] || [ "${enable_systemd}" = "Y" ]; then
+    setup_systemd
+fi
+
 echo "Deployment complete."
 if [ "$SSL_MODE" = "strict" ]; then
     echo "API: https://${API_DOMAIN}"
