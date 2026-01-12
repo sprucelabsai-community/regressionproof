@@ -151,6 +151,13 @@ curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionpr
 bash /tmp/deploy-ec2.sh
 ```
 
+**Reset the stack (optional):**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/reset-ec2.sh -o /tmp/reset-ec2.sh
+bash /tmp/reset-ec2.sh
+```
+
 To see available options, run:
 
 ```bash
