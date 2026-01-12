@@ -1,7 +1,7 @@
 {
   "name": "@regressionproof/tests",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "build.ci": "yarn run build.tsc && yarn run build.resolve-paths && yarn run lint",
     "build.dev": "yarn run build.tsc --sourceMap ; yarn run resolve-paths.lint",
@@ -41,8 +41,8 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@regressionproof/api": "^0.1.0",
-    "@regressionproof/client": "^0.1.0",
+    "@regressionproof/api": "^0.1.1",
+    "@regressionproof/client": "^0.1.1",
     "dotenv": "^17.2.3"
   },
   "description": "handles tests of the regression proof ecosystem",
