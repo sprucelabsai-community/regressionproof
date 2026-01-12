@@ -2,13 +2,13 @@
 
 set -euo pipefail
 
-SCRIPT_VERSION="0.2.10"
+SCRIPT_VERSION="0.2.11"
 LAST_CHANGES=(
-    "Persist Gitea admin credentials to env file for API"
+    "Pause for manual Gitea setup before starting API"
+    "Prompt for admin credentials created in Gitea"
+    "Start Gitea and Nginx before API"
     "Verify API and Gitea reachability after deploy"
-    "Summarize container status at the end"
-    "Prompt for Gitea admin credentials before compose"
-    "Remove obsolete compose version field"
+    "Persist admin credentials to env file for API"
 )
 REPO_URL="${REPO_URL:-https://github.com/sprucelabsai-community/regressionproof.git}"
 ROOT_DIR="${ROOT_DIR:-$HOME/regressionproof}"
@@ -124,43 +124,6 @@ else
 fi
 
 mkdir -p "$ROOT_DIR/nginx/certs"
-
-generate_password() {
-    if command -v openssl >/dev/null 2>&1; then
-        openssl rand -hex 16
-    else
-        date +%s | sha256sum | head -c 32
-    fi
-}
-
-if [ -z "$GITEA_ADMIN_PASSWORD" ]; then
-    if [ -t 0 ] || [ -t 1 ]; then
-        prompt_device="/dev/tty"
-        if [ ! -r "$prompt_device" ]; then
-            prompt_device="/dev/stdin"
-        fi
-
-        echo "Gitea admin credentials"
-        read -r -p "Admin username [${GITEA_ADMIN_USER}]: " input_user < "$prompt_device"
-        if [ -n "$input_user" ]; then
-            GITEA_ADMIN_USER="$input_user"
-        fi
-        read -r -s -p "Admin password (leave blank to auto-generate): " input_pass < "$prompt_device"
-        echo ""
-        if [ -n "$input_pass" ]; then
-            GITEA_ADMIN_PASSWORD="$input_pass"
-        else
-            GITEA_ADMIN_PASSWORD="$(generate_password)"
-        fi
-    else
-        GITEA_ADMIN_PASSWORD="$(generate_password)"
-    fi
-fi
-
-cat > "$ROOT_DIR/.regressionproof.env" <<EOF
-GITEA_ADMIN_USER=${GITEA_ADMIN_USER}
-GITEA_ADMIN_PASSWORD=${GITEA_ADMIN_PASSWORD}
-EOF
 
 if [ "$SSL_MODE" = "strict" ]; then
     cat > "$ROOT_DIR/nginx/nginx.conf" <<EOF
@@ -308,15 +271,23 @@ if [ "$SSL_MODE" = "strict" ]; then
     fi
 fi
 
-run_compose() {
+run_compose_base() {
     if docker compose version >/dev/null 2>&1; then
-        docker compose up -d --build
+        docker compose up -d --build gitea nginx
     else
-        docker-compose up -d --build
+        docker-compose up -d --build gitea nginx
     fi
 }
 
-if ! run_compose; then
+run_compose_api() {
+    if docker compose version >/dev/null 2>&1; then
+        docker compose up -d --build api
+    else
+        docker-compose up -d --build api
+    fi
+}
+
+if ! run_compose_base; then
     if docker ps >/dev/null 2>&1; then
         echo "Docker is running but compose failed."
         exit 1
@@ -326,15 +297,67 @@ if ! run_compose; then
     echo "Attempting with sudo..."
 
     if docker compose version >/dev/null 2>&1; then
-        sudo docker compose up -d --build
+        sudo docker compose up -d --build gitea nginx
     else
-        sudo docker-compose up -d --build
+        sudo docker-compose up -d --build gitea nginx
     fi
 
     echo ""
     echo "To avoid sudo next time, run:"
     echo "  sudo usermod -aG docker $USER"
     echo "  newgrp docker"
+fi
+
+echo ""
+echo "Gitea setup required:"
+echo "  Open: http://${GIT_DOMAIN}"
+echo "  Complete the setup wizard and create the admin user."
+read -r -p "Press Enter to continue once Gitea setup is complete..." _
+
+if [ -z "$GITEA_ADMIN_PASSWORD" ]; then
+    if [ -t 0 ] || [ -t 1 ]; then
+        prompt_device="/dev/tty"
+        if [ ! -r "$prompt_device" ]; then
+            prompt_device="/dev/stdin"
+        fi
+
+        echo "Gitea admin credentials (from your setup)"
+        read -r -p "Admin username [${GITEA_ADMIN_USER}]: " input_user < "$prompt_device"
+        if [ -n "$input_user" ]; then
+            GITEA_ADMIN_USER="$input_user"
+        fi
+        read -r -s -p "Admin password: " input_pass < "$prompt_device"
+        echo ""
+        if [ -z "$input_pass" ]; then
+            echo "Admin password is required."
+            exit 1
+        fi
+        GITEA_ADMIN_PASSWORD="$input_pass"
+    else
+        echo "GITEA_ADMIN_PASSWORD is required in non-interactive mode."
+        exit 1
+    fi
+fi
+
+cat > "$ROOT_DIR/.regressionproof.env" <<EOF
+GITEA_ADMIN_USER=${GITEA_ADMIN_USER}
+GITEA_ADMIN_PASSWORD=${GITEA_ADMIN_PASSWORD}
+EOF
+
+if ! run_compose_api; then
+    if docker ps >/dev/null 2>&1; then
+        echo "Docker is running but compose failed."
+        exit 1
+    fi
+
+    echo "Docker permissions not available for this user."
+    echo "Attempting with sudo..."
+
+    if docker compose version >/dev/null 2>&1; then
+        sudo docker compose up -d --build api
+    else
+        sudo docker-compose up -d --build api
+    fi
 fi
 
 echo ""
