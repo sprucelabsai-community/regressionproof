@@ -6,20 +6,10 @@
   },
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
-  "module": "./build/esm/index.js",
   "sideEffects": false,
-  "exports": {
-    ".": {
-      "import": {
-        "types": "./build/esm/index.d.ts",
-        "default": "./build/esm/index.js"
-      },
-      "require": {
-        "types": "./build/index.d.ts",
-        "default": "./build/index.js"
-      }
-    }
-  },
+  "files": [
+    "build"
+  ],
   "scripts": {
     "build.ci": "yarn run build.tsc && yarn run build.resolve-paths && yarn run lint",
     "build.dev": "yarn run build.tsc --sourceMap ; yarn run resolve-paths.lint",
