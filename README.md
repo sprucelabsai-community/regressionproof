@@ -144,8 +144,11 @@ Follow these steps in order:
 
 4. **Bootstrap the API + Gitea stack**:
 
+Use a local file so interactive prompts work correctly.
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/deploy-ec2.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/deploy-ec2.sh -o /tmp/deploy-ec2.sh
+bash /tmp/deploy-ec2.sh
 ```
 
 To see available options, run:

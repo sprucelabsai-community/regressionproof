@@ -9,7 +9,8 @@ This guide deploys the API and Gitea on a single EC2 instance, exposed via
 On a fresh EC2 instance, you can run the bootstrap script:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/deploy-ec2.sh | bash
+curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/deploy-ec2.sh -o /tmp/deploy-ec2.sh
+bash /tmp/deploy-ec2.sh
 ```
 
 ## Current Status (Flexible SSL)
@@ -35,7 +36,8 @@ curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionpr
    - Run by hash (replace with latest hash when testing):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/b494f10bcdb5df1ef0bae6aeda47c0a91d90ada6/scripts/deploy-ec2.sh | bash -s -- --sslMode=flexible
+curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/b494f10bcdb5df1ef0bae6aeda47c0a91d90ada6/scripts/deploy-ec2.sh -o /tmp/deploy-ec2.sh
+bash /tmp/deploy-ec2.sh --sslMode=flexible
 ```
 
 5. **Verify containers**:
