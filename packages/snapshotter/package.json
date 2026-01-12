@@ -1,6 +1,9 @@
 {
   "name": "@regressionproof/snapshotter",
   "version": "0.0.1",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "module": "./build/esm/index.js",
