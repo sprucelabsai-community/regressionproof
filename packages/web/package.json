@@ -1,0 +1,11 @@
+{
+  "name": "@regressionproof/web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Marketing website for regressionproof.ai",
+  "scripts": {
+    "serve": "npx serve .",
+    "build": "echo 'No build needed - static files ready for deployment'",
+    "deploy": "aws s3 sync packages/web s3://regressionproof.ai --delete"
+  }
+}

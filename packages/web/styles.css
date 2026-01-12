@@ -93,7 +93,7 @@ body {
 
 .logo-text {
     color: var(--neon-cyan);
-    text-shadow: var(--glow-cyan);
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.45);
     animation: pulse-glow 3s ease-in-out infinite;
 }
 
@@ -223,6 +223,14 @@ section {
     text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
 }
 
+.section-lede {
+    max-width: 800px;
+    margin: -2rem auto 3rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 1rem;
+}
+
 /* ============================================
    HOW IT WORKS
    ============================================ */
@@ -263,8 +271,8 @@ section {
     font-size: 3rem;
     font-weight: 900;
     color: var(--neon-purple);
-    text-shadow: var(--glow-purple);
-    opacity: 0.3;
+    text-shadow: 0 0 12px rgba(123, 47, 255, 0.5);
+    opacity: 0.8;
     margin-bottom: 0.5rem;
 }
 
@@ -311,6 +319,80 @@ section {
 
 .why-contribute {
     background: var(--bg-deep);
+}
+
+/* ============================================
+   ROADMAP
+   ============================================ */
+
+.roadmap {
+    background: var(--bg-surface);
+}
+
+.timeline {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 12px;
+    width: 2px;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 240, 255, 0.4),
+        rgba(123, 47, 255, 0.4)
+    );
+}
+
+.timeline-item {
+    position: relative;
+    padding: 0 0 2.5rem 2.5rem;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -2px;
+    top: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--bg-deep);
+    border: 2px solid var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+.timeline-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.timeline-desc {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.tdd-laws {
+    background: var(--bg-surface);
+}
+
+.tdd-laws .card-icon {
+    font-family: var(--font-display);
+    font-weight: 900;
+    letter-spacing: 0.1em;
 }
 
 .cards {
