@@ -2,19 +2,21 @@
 
 set -euo pipefail
 
-SCRIPT_VERSION="0.2.5"
+SCRIPT_VERSION="0.2.6"
 LAST_CHANGES=(
+    "Generate and export Gitea admin credentials"
     "Install rsync in API Docker build stage"
     "Use Node 22 base image for API build"
     "Handle missing yarn.lock during API image build"
     "Add sudo fallback when Docker permissions are missing"
-    "Support flexible/strict SSL modes via --sslMode"
 )
 REPO_URL="${REPO_URL:-https://github.com/sprucelabsai-community/regressionproof.git}"
 ROOT_DIR="${ROOT_DIR:-$HOME/regressionproof}"
 API_DOMAIN="${API_DOMAIN:-api.regressionproof.ai}"
 GIT_DOMAIN="${GIT_DOMAIN:-git.regressionproof.ai}"
 SSL_MODE="${SSL_MODE:-strict}"
+GITEA_ADMIN_USER="${GITEA_ADMIN_USER:-admin}"
+GITEA_ADMIN_PASSWORD="${GITEA_ADMIN_PASSWORD:-}"
 
 print_help() {
     cat <<EOF
@@ -231,6 +233,8 @@ services:
       - NODE_ENV=production
       - GITEA_URL=http://gitea:3000
       - API_PORT=3000
+      - GITEA_ADMIN_USER=${GITEA_ADMIN_USER}
+      - GITEA_ADMIN_PASSWORD=${GITEA_ADMIN_PASSWORD}
     depends_on:
       - gitea
     networks:
@@ -306,4 +310,17 @@ else
     echo "API: http://${API_DOMAIN}"
     echo "Gitea: http://${GIT_DOMAIN}"
 fi
+echo "Gitea admin user: ${GITEA_ADMIN_USER}"
+echo "Gitea admin password: ${GITEA_ADMIN_PASSWORD}"
 echo "If this is your first run, log out and back in to use Docker without sudo."
+generate_password() {
+    if command -v openssl >/dev/null 2>&1; then
+        openssl rand -hex 16
+    else
+        date +%s | sha256sum | head -c 32
+    fi
+}
+
+if [ -z "$GITEA_ADMIN_PASSWORD" ]; then
+    GITEA_ADMIN_PASSWORD="$(generate_password)"
+fi
