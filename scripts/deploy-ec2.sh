@@ -2,13 +2,13 @@
 
 set -euo pipefail
 
-SCRIPT_VERSION="0.2.11"
+SCRIPT_VERSION="0.2.12"
 LAST_CHANGES=(
+    "Skip Gitea setup when env file exists"
+    "Offer optional systemd boot setup"
+    "Bind API to 0.0.0.0 via API_HOST"
     "Pause for manual Gitea setup before starting API"
-    "Prompt for admin credentials created in Gitea"
     "Start Gitea and Nginx before API"
-    "Verify API and Gitea reachability after deploy"
-    "Persist admin credentials to env file for API"
 )
 REPO_URL="${REPO_URL:-https://github.com/sprucelabsai-community/regressionproof.git}"
 ROOT_DIR="${ROOT_DIR:-$HOME/regressionproof}"

@@ -2,10 +2,12 @@
 
 set -euo pipefail
 
-SCRIPT_VERSION="0.1.0"
+SCRIPT_VERSION="0.1.1"
 LAST_CHANGES=(
-    "Pull latest code and rebuild API/nginx"
-    "Show container status and service checks"
+    "Pull latest code in the repo root"
+    "Rebuild API and nginx only"
+    "Show container status table"
+    "Run service checks via nginx"
 )
 ROOT_DIR="${ROOT_DIR:-$HOME/regressionproof}"
 API_DOMAIN="${API_DOMAIN:-api.regressionproof.ai}"

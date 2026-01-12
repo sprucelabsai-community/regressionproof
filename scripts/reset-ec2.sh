@@ -2,11 +2,11 @@
 
 set -euo pipefail
 
-SCRIPT_VERSION="0.2.9"
+SCRIPT_VERSION="0.2.10"
 LAST_CHANGES=(
     "Add force mode for non-interactive resets"
     "Use sudo fallback when removing Gitea data"
-    "Display script version and recent changes"
+    "Prefer docker compose down when available"
 )
 ROOT_DIR="${ROOT_DIR:-$HOME/regressionproof}"
 FORCE="${FORCE:-false}"
