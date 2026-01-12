@@ -1,6 +1,6 @@
 {
   "name": "@regressionproof/client",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "publishConfig": {
     "access": "public"
   },
@@ -45,7 +45,7 @@
     "watch.tsc": "tsc -w"
   },
   "dependencies": {
-    "@regressionproof/api": "^0.1.1"
+    "@regressionproof/api": "^0.1.2"
   },
   "devDependencies": {
     "@sprucelabs/esm-postbuild": "^9.0.13",
