@@ -4,11 +4,7 @@
 
 - Whenever we push a change to any EC2 script, always output the command to run it on the EC2 host.
 - Commands must use the latest commit hash.
-- Remember optional arguments across the session once chosen (for example, SSL mode).
-
-## SSL Mode
-
-- Confirm the SSL mode before generating commands and then keep using it for the rest of the session.
+- Always mention `--help` support for scripts when giving commands.
 
 ## Example Commands
 
