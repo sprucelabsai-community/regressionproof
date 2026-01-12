@@ -127,12 +127,6 @@ Check http://localhost:3333 for snapshots (admin / devpassword123).
 
 ## Deploy (EC2)
 
-Bootstrap the API + Gitea stack on a fresh EC2 instance:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/deploy-ec2.sh | bash
-```
-
 Before running the script, create a Cloudflare Origin Certificate for
 `api.regressionproof.ai` and `git.regressionproof.ai`, then save it on the
 instance at:
@@ -140,4 +134,10 @@ instance at:
 ```
 ~/regressionproof/nginx/certs/origin.pem
 ~/regressionproof/nginx/certs/origin.key
+```
+
+Bootstrap the API + Gitea stack on a fresh EC2 instance:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionproof/master/scripts/deploy-ec2.sh | bash
 ```
