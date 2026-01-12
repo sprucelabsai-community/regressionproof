@@ -2,6 +2,7 @@
 
 set -euo pipefail
 
+SCRIPT_VERSION="0.2.0"
 REPO_URL="${REPO_URL:-https://github.com/sprucelabsai-community/regressionproof.git}"
 ROOT_DIR="${ROOT_DIR:-$HOME/regressionproof}"
 API_DOMAIN="${API_DOMAIN:-api.regressionproof.ai}"
@@ -10,6 +11,9 @@ SSL_MODE="${SSL_MODE:-strict}"
 
 print_help() {
     cat <<EOF
+regressionproof.ai deployment bootstrap
+Version: ${SCRIPT_VERSION}
+
 Usage: ./scripts/deploy-ec2.sh [--sslMode=flexible|strict]
 
 Options:
@@ -23,8 +27,14 @@ Environment:
   API_DOMAIN API domain (default: ${API_DOMAIN})
   GIT_DOMAIN Gitea domain (default: ${GIT_DOMAIN})
   SSL_MODE   SSL mode override (default: ${SSL_MODE})
+  VERSION    Script version (current: ${SCRIPT_VERSION})
 EOF
 }
+
+echo "=============================================="
+echo "regressionproof.ai deployment bootstrap"
+echo "Version: ${SCRIPT_VERSION}"
+echo "=============================================="
 
 for arg in "$@"; do
     case "$arg" in
