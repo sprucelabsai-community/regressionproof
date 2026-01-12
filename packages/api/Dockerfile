@@ -1,4 +1,4 @@
-FROM node:20-bullseye-slim AS build
+FROM node:22-bullseye-slim AS build
 
 WORKDIR /app
 
@@ -10,7 +10,7 @@ RUN yarn install --non-interactive
 RUN yarn workspace @regressionproof/api build.tsc
 RUN yarn workspace @regressionproof/api build.resolve-paths
 
-FROM node:20-bullseye-slim
+FROM node:22-bullseye-slim
 
 WORKDIR /app
 

@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-SCRIPT_VERSION="0.2.3"
+SCRIPT_VERSION="0.2.4"
 LAST_CHANGES=(
-    "Use Node 20 base image for API build"
+    "Use Node 22 base image for API build"
     "Handle missing yarn.lock during API image build"
     "Add sudo fallback when Docker permissions are missing"
     "Support flexible/strict SSL modes via --sslMode"
