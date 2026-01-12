@@ -6,6 +6,12 @@
 - Commands must use the latest commit hash.
 - Always mention `--help` support for scripts when giving commands.
 
+## Invites (manual)
+
+- `regressionproof invite create` prints a token to share manually.
+- `regressionproof invite accept` prints the project URL and token for local storage.
+- Use `--help` for CLI usage details.
+
 ## Example Commands
 
 These are example commands based on what we have used (without `--sslMode`):

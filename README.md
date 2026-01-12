@@ -158,6 +158,28 @@ curl -fsSL https://raw.githubusercontent.com/sprucelabsai-community/regressionpr
 bash /tmp/reset-ec2.sh
 ```
 
+### Invites (manual)
+
+Create an invite (requires existing project token):
+```bash
+regressionproof invite create <projectName> --note="optional note"
+```
+
+Accept an invite:
+```bash
+regressionproof invite accept <token>
+```
+
+List invites:
+```bash
+regressionproof invite list [projectName]
+```
+
+Revoke an invite:
+```bash
+regressionproof invite revoke <token>
+```
+
 To see available options, run:
 
 ```bash

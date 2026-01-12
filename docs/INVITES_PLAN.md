@@ -38,7 +38,7 @@ Add a manual invite flow for project access using a single shared environment, w
     - Add `packages/cli/src/commands/invite/ListInvites.ts`
     - Add `packages/cli/src/commands/invite/RevokeInvite.ts`
 
-- [ ] Step 6: Document the manual invite flow
+- [x] Step 6: Document the manual invite flow
   - Files:
     - Modify `README.md` (invite usage examples)
     - Modify `docs/PROJECT.md` (manual copy/paste flow)
