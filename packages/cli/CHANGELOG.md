@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.3.0](https://github.com/sprucelabsai-community/regressionproof/compare/v0.2.25...v0.3.0) (2026-01-12)
+
+
+### Features
+
+* add invites storage and cli commands ([20464c9](https://github.com/sprucelabsai-community/regressionproof/commit/20464c9))
+* invites rev 1 ([6dbee04](https://github.com/sprucelabsai-community/regressionproof/commit/6dbee04))
+
+
+
+
+
 ## [0.2.25](https://github.com/sprucelabsai-community/regressionproof/compare/v0.2.24...v0.2.25) (2026-01-12)
 
 **Note:** Version bump only for package @regressionproof/cli
