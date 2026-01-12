@@ -4,13 +4,9 @@ Capture your TDD workflow to help train AI coding agents. Each test run creates 
 
 ## Quick Start
 
-### 1. Install
+**Currently supported:** Jest on Node.js. Need another framework or language? [Request it here.](https://github.com/sprucelabsai-community/regressionproof/issues/new?title=Framework%20Request:%20&labels=enhancement)
 
-```bash
-yarn add -D @regressionproof/cli @regressionproof/jest-reporter
-```
-
-### 2. Initialize
+### 1. Initialize
 
 ```bash
 npx regressionproof init
@@ -19,9 +15,10 @@ npx regressionproof init
 This will:
 - Register your project
 - Save credentials to `~/.regressionproof/<project-name>/`
+- Install `@regressionproof/jest-reporter` in your project
 - Auto-configure Jest to use the reporter
 
-### 3. Run Tests
+### 2. Run Tests
 
 ```bash
 yarn test

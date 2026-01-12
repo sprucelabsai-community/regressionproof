@@ -4,6 +4,8 @@ import { Box, Text, useApp } from 'ink'
 import BigText from 'ink-big-text'
 import TextInput from 'ink-text-input'
 import React from 'react'
+import { spawnSync } from 'node:child_process'
+import { existsSync, readFileSync } from 'node:fs'
 import ConfigManager, { Credentials } from '../config/ConfigManager.js'
 import JestConfigurator, { JestConfigResult } from '../jest/JestConfigurator.js'
 import { getRepoNameFromGit, toSlug } from '../utilities/slug.js'
@@ -30,7 +32,7 @@ class InitComponent extends React.Component<Props, State> {
         if (existingCreds) {
             this.state = {
                 name: defaultName,
-                step: 'success',
+                step: 'installing',
                 availability: 'available',
                 errorMessage: '',
                 credentials: existingCreds,
@@ -52,12 +54,8 @@ class InitComponent extends React.Component<Props, State> {
         // If we have a provided name and not already registered, start registration
         if (this.props.projectName && this.state.step === 'registering') {
             void this.register()
-        } else if (this.state.step === 'success') {
-            // Already registered, configure Jest and exit
-            const jestConfigurator = new JestConfigurator()
-            const jestConfig = jestConfigurator.configure()
-            this.setState({ jestConfig })
-            setTimeout(() => this.props.exit(), 1000)
+        } else if (this.state.step === 'installing') {
+            void this.installAndConfigure()
         } else {
             void this.checkAvailability()
         }
@@ -137,20 +135,113 @@ class InitComponent extends React.Component<Props, State> {
             this.setState({ credentials })
 
             this.configManager.saveCredentials(name, credentials)
-
-            this.setState({ step: 'configuring' })
-
-            const jestConfigurator = new JestConfigurator()
-            const jestConfig = jestConfigurator.configure()
-            this.setState({ jestConfig, step: 'success' })
-
-            setTimeout(() => this.props.exit(), 3000)
+            await this.installAndConfigure()
         } catch (err) {
             this.setState({
                 step: 'error',
                 errorMessage: err instanceof Error ? err.message : String(err),
             })
         }
+    }
+
+    private async installAndConfigure(): Promise<void> {
+        this.setState({ step: 'installing' })
+        const installResult = this.installDependencies()
+        if (!installResult.success) {
+            this.setState({
+                step: 'error',
+                errorMessage: installResult.message,
+            })
+            return
+        }
+
+        this.setState({ step: 'configuring' })
+        const jestConfigurator = new JestConfigurator()
+        const jestConfig = jestConfigurator.configure()
+        this.setState({ jestConfig, step: 'success' })
+
+        setTimeout(() => this.props.exit(), 3000)
+    }
+
+    private installDependencies(): InstallResult {
+        if (!existsSync('package.json')) {
+            return {
+                success: false,
+                message:
+                    'No package.json found. regressionproof currently supports Node.js + Jest projects.',
+            }
+        }
+
+        let packageJson: {
+            dependencies?: Record<string, string>
+            devDependencies?: Record<string, string>
+        }
+
+        try {
+            packageJson = JSON.parse(
+                readFileSync('package.json', 'utf8')
+            ) as {
+                dependencies?: Record<string, string>
+                devDependencies?: Record<string, string>
+            }
+        } catch (err) {
+            const message = err instanceof Error ? err.message : String(err)
+            return {
+                success: false,
+                message: `Failed to read package.json: ${message}`,
+            }
+        }
+
+        const hasReporter = Boolean(
+            packageJson.dependencies?.['@regressionproof/jest-reporter'] ??
+                packageJson.devDependencies?.[
+                    '@regressionproof/jest-reporter'
+                ]
+        )
+        if (hasReporter) {
+            return { success: true }
+        }
+
+        const packageManager = this.getPackageManager()
+        const result = spawnSync(
+            packageManager.command,
+            [...packageManager.args, '@regressionproof/jest-reporter'],
+            {
+                encoding: 'utf8',
+                shell: true,
+            }
+        )
+
+        if (result.error || result.status !== 0) {
+            const details =
+                result.stderr?.trim() ||
+                result.stdout?.trim() ||
+                result.error?.message
+            return {
+                success: false,
+                message: `Failed to install dependencies${
+                    details ? `: ${details}` : ''
+                }`,
+            }
+        }
+
+        return { success: true }
+    }
+
+    private getPackageManager(): PackageManager {
+        if (existsSync('pnpm-lock.yaml')) {
+            return { command: 'pnpm', args: ['add', '-D'] }
+        }
+
+        if (existsSync('yarn.lock')) {
+            return { command: 'yarn', args: ['add', '-D'] }
+        }
+
+        if (existsSync('package-lock.json')) {
+            return { command: 'npm', args: ['install', '-D'] }
+        }
+
+        return { command: 'npm', args: ['install', '-D'] }
     }
 
     private renderStatusIndicator(): React.ReactNode {
@@ -184,6 +275,14 @@ class InitComponent extends React.Component<Props, State> {
         return (
             <Box flexDirection="column" padding={1}>
                 <Text color="yellow">Configuring Jest reporter...</Text>
+            </Box>
+        )
+    }
+
+    private renderInstalling(): React.ReactElement {
+        return (
+            <Box flexDirection="column" padding={1}>
+                <Text color="yellow">Installing dependencies...</Text>
             </Box>
         )
     }
@@ -285,6 +384,8 @@ class InitComponent extends React.Component<Props, State> {
         switch (step) {
             case 'registering':
                 return this.renderRegistering()
+            case 'installing':
+                return this.renderInstalling()
             case 'configuring':
                 return this.renderConfiguring()
             case 'success':
@@ -302,7 +403,13 @@ export default function Init(props: { projectName?: string }): React.ReactElemen
     return <InitComponent exit={exit} projectName={props.projectName} />
 }
 
-type Step = 'input' | 'registering' | 'configuring' | 'success' | 'error'
+type Step =
+    | 'input'
+    | 'registering'
+    | 'installing'
+    | 'configuring'
+    | 'success'
+    | 'error'
 type Availability = 'idle' | 'checking' | 'available' | 'taken' | 'error'
 
 interface Props {
@@ -317,4 +424,14 @@ interface State {
     errorMessage: string
     credentials: Credentials | null
     jestConfig: JestConfigResult | null
+}
+
+interface PackageManager {
+    command: string
+    args: string[]
+}
+
+interface InstallResult {
+    success: boolean
+    message?: string
 }
