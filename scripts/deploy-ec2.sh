@@ -232,8 +232,11 @@ services:
       - GITEA_URL=http://gitea:3000
       - API_PORT=3000
       - API_HOST=0.0.0.0
+      - API_DB_PATH=/app/data/data.sqlite
     env_file:
       - ./.regressionproof.env
+    volumes:
+      - ./api/data:/app/data
     depends_on:
       - gitea
     networks:
