@@ -1,6 +1,6 @@
 # regressionproof
 
-Capture your TDD workflow to help train coding agents. Each test run creates a snapshot of your code + test results, building a history that becomes LLM training data.
+Capture your TDD workflow to help train AI coding agents. Each test run creates a snapshot of your code + test results, building a history that becomes LLM training data.
 
 ## Quick Start
 
