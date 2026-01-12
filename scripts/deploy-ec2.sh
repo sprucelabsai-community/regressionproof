@@ -6,10 +6,52 @@ REPO_URL="${REPO_URL:-https://github.com/sprucelabsai-community/regressionproof.
 ROOT_DIR="${ROOT_DIR:-$HOME/regressionproof}"
 API_DOMAIN="${API_DOMAIN:-api.regressionproof.ai}"
 GIT_DOMAIN="${GIT_DOMAIN:-git.regressionproof.ai}"
+SSL_MODE="${SSL_MODE:-strict}"
+
+print_help() {
+    cat <<EOF
+Usage: ./scripts/deploy-ec2.sh [--sslMode=flexible|strict]
+
+Options:
+  --sslMode=flexible  Use HTTP-only origin (Cloudflare Flexible SSL).
+  --sslMode=strict    Use HTTPS origin + Cloudflare Origin Certs (default).
+  --help              Show this help message.
+
+Environment:
+  REPO_URL   Git repo to clone (default: ${REPO_URL})
+  ROOT_DIR   Target directory (default: ${ROOT_DIR})
+  API_DOMAIN API domain (default: ${API_DOMAIN})
+  GIT_DOMAIN Gitea domain (default: ${GIT_DOMAIN})
+  SSL_MODE   SSL mode override (default: ${SSL_MODE})
+EOF
+}
+
+for arg in "$@"; do
+    case "$arg" in
+        --sslMode=*)
+            SSL_MODE="${arg#*=}"
+            ;;
+        --help|-h)
+            print_help
+            exit 0
+            ;;
+        *)
+            echo "Unknown argument: $arg"
+            echo "Run with --help for usage."
+            exit 1
+            ;;
+    esac
+done
+
+if [ "$SSL_MODE" != "flexible" ] && [ "$SSL_MODE" != "strict" ]; then
+    echo "Invalid SSL mode: $SSL_MODE"
+    echo "Use --sslMode=flexible or --sslMode=strict"
+    exit 1
+fi
 
 install_packages_apt() {
     sudo apt update
-    sudo apt install -y git docker.io docker-compose-plugin
+    sudo apt install -y git docker.io
     sudo systemctl enable --now docker
 }
 
@@ -60,7 +102,8 @@ fi
 
 mkdir -p "$ROOT_DIR/nginx/certs"
 
-cat > "$ROOT_DIR/nginx/nginx.conf" <<EOF
+if [ "$SSL_MODE" = "strict" ]; then
+    cat > "$ROOT_DIR/nginx/nginx.conf" <<EOF
 events {}
 
 http {
@@ -105,6 +148,37 @@ http {
   }
 }
 EOF
+else
+    cat > "$ROOT_DIR/nginx/nginx.conf" <<EOF
+events {}
+
+http {
+  server {
+    listen 80;
+    server_name ${API_DOMAIN};
+    location / {
+      proxy_pass http://api:3000;
+      proxy_set_header Host \$host;
+      proxy_set_header X-Real-IP \$remote_addr;
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+  }
+
+  server {
+    listen 80;
+    server_name ${GIT_DOMAIN};
+    location / {
+      proxy_pass http://gitea:3000;
+      proxy_set_header Host \$host;
+      proxy_set_header X-Real-IP \$remote_addr;
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+  }
+}
+EOF
+fi
 
 cat > "$ROOT_DIR/docker-compose.yml" <<EOF
 version: "3.8"
@@ -164,12 +238,14 @@ EOF
 
 cd "$ROOT_DIR"
 
-if [ ! -f "$ROOT_DIR/nginx/certs/origin.pem" ] || [ ! -f "$ROOT_DIR/nginx/certs/origin.key" ]; then
-    echo "Missing Cloudflare Origin Certs."
-    echo "Place certs at:"
-    echo "  $ROOT_DIR/nginx/certs/origin.pem"
-    echo "  $ROOT_DIR/nginx/certs/origin.key"
-    exit 1
+if [ "$SSL_MODE" = "strict" ]; then
+    if [ ! -f "$ROOT_DIR/nginx/certs/origin.pem" ] || [ ! -f "$ROOT_DIR/nginx/certs/origin.key" ]; then
+        echo "Missing Cloudflare Origin Certs."
+        echo "Place certs at:"
+        echo "  $ROOT_DIR/nginx/certs/origin.pem"
+        echo "  $ROOT_DIR/nginx/certs/origin.key"
+        exit 1
+    fi
 fi
 
 if docker compose version >/dev/null 2>&1; then
@@ -179,6 +255,11 @@ else
 fi
 
 echo "Deployment complete."
-echo "API: https://${API_DOMAIN}"
-echo "Gitea: https://${GIT_DOMAIN}"
+if [ "$SSL_MODE" = "strict" ]; then
+    echo "API: https://${API_DOMAIN}"
+    echo "Gitea: https://${GIT_DOMAIN}"
+else
+    echo "API: http://${API_DOMAIN}"
+    echo "Gitea: http://${GIT_DOMAIN}"
+fi
 echo "If this is your first run, log out and back in to use Docker without sudo."
