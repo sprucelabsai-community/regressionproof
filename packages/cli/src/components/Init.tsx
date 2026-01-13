@@ -1,6 +1,7 @@
 import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
-import RegressionProofClient from '@regressionproof/client'
+import type { RegressionProofClient } from '@regressionproof/client'
+import { buildRegressionProofClient } from '@regressionproof/client'
 import { Box, Text, useApp } from 'ink'
 import BigText from 'ink-big-text'
 import TextInput from 'ink-text-input'
@@ -14,7 +15,7 @@ const API_URL =
 
 class InitComponent extends React.Component<Props, State> {
     private checkTimeout: NodeJS.Timeout | null = null
-    private apiClient: InstanceType<typeof RegressionProofClient>
+    private apiClient: RegressionProofClient
     private configManager: ConfigManager
 
     public constructor(props: Props) {
@@ -24,7 +25,7 @@ class InitComponent extends React.Component<Props, State> {
         const defaultName = providedName ?? getRepoNameFromGit()
 
         this.configManager = new ConfigManager()
-        this.apiClient = new RegressionProofClient(API_URL)
+        this.apiClient = buildRegressionProofClient(API_URL)
 
         // Check if already registered (idempotent)
         const existingCreds = this.configManager.loadCredentials(defaultName)

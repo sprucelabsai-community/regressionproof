@@ -10,8 +10,10 @@ import {
     Database,
     InvitesStore,
 } from '@regressionproof/api'
-import RegressionProofClient, {
+import type { RegressionProofClient } from '@regressionproof/client'
+import {
     ProjectCredentials,
+    buildRegressionProofClient,
 } from '@regressionproof/client'
 
 @suite()
@@ -41,7 +43,7 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
 
     protected async beforeEach() {
         await super.beforeEach()
-        this.client = new RegressionProofClient(
+        this.client = buildRegressionProofClient(
             `http://localhost:${this.api.getPort()}`
         )
     }
@@ -233,7 +235,7 @@ export default class RegisteringProjectsTest extends AbstractSpruceTest {
     }
 
     private Client(api: RegressionProofApi): RegressionProofClient {
-        return new RegressionProofClient(`http://localhost:${api.getPort()}`)
+        return buildRegressionProofClient(`http://localhost:${api.getPort()}`)
     }
 
     private static createInvitesStore(): InvitesStore {
