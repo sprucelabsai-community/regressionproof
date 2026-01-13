@@ -130,6 +130,7 @@ if [ "$SSL_MODE" = "strict" ]; then
 events {}
 
 http {
+  client_max_body_size 100m;
   server {
     listen 80;
     server_name ${API_DOMAIN};
@@ -176,6 +177,7 @@ else
 events {}
 
 http {
+  client_max_body_size 100m;
   server {
     listen 80;
     server_name ${API_DOMAIN};
