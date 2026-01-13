@@ -1,6 +1,6 @@
 {
   "name": "@regressionproof/cli",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "publishConfig": {
     "access": "public"
   },
@@ -38,7 +38,7 @@
     "watch.tsc": "tsc -w"
   },
   "dependencies": {
-    "@regressionproof/client": "^0.5.1",
+    "@regressionproof/client": "^0.5.2",
     "dotenv": "^17.2.3",
     "ink": "^5.1.0",
     "ink-big-text": "^2.0.0",
