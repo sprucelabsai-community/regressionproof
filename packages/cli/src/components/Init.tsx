@@ -1,6 +1,6 @@
 import { spawnSync } from 'node:child_process'
 import { existsSync, readFileSync } from 'node:fs'
-import client from '@regressionproof/client'
+import { RegressionProofClient } from '@regressionproof/client'
 import { Box, Text, useApp } from 'ink'
 import BigText from 'ink-big-text'
 import TextInput from 'ink-text-input'
@@ -8,7 +8,6 @@ import React from 'react'
 import ConfigManager, { Credentials } from '../config/ConfigManager.js'
 import JestConfigurator, { JestConfigResult } from '../jest/JestConfigurator.js'
 import { getRepoNameFromGit, toSlug } from '../utilities/slug.js'
-const RegressionProofClient = client.default ?? client
 
 const API_URL =
     process.env.REGRESSIONPROOF_API_URL ?? 'https://api.regressionproof.ai'
