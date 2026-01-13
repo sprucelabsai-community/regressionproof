@@ -51,7 +51,23 @@ export async function gitPush(
         )
     }
 
+    await execOrThrow(`git -C "${mirrorPath}" fetch origin`, log)
+    if (await hasRemoteHead(mirrorPath)) {
+        await execOrThrow(`git -C "${mirrorPath}" rebase origin/HEAD`, log)
+    }
+
     await execOrThrow(`git -C "${mirrorPath}" push -u origin HEAD`, log)
+}
+
+async function hasRemoteHead(mirrorPath: string): Promise<boolean> {
+    try {
+        await execAsync(
+            `git -C "${mirrorPath}" symbolic-ref -q refs/remotes/origin/HEAD`
+        )
+        return true
+    } catch {
+        return false
+    }
 }
 
 async function execOrThrow(
