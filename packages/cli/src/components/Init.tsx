@@ -1,6 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import path from 'node:path'
+import { existsSync, readFileSync } from 'node:fs'
 import type { RegressionProofClient } from '@regressionproof/client'
 import { buildRegressionProofClient } from '@regressionproof/client'
 import { Box, Text, useApp } from 'ink'
@@ -10,7 +9,6 @@ import React from 'react'
 import ConfigManager, { Credentials } from '../config/ConfigManager.js'
 import JestConfigurator, { JestConfigResult } from '../jest/JestConfigurator.js'
 import { getRepoNameFromGit, toSlug } from '../utilities/slug.js'
-import { getCliVersion } from '../utilities/version.js'
 
 const API_URL =
     process.env.REGRESSIONPROOF_API_URL ?? 'https://api.regressionproof.ai'
@@ -137,7 +135,7 @@ class InitComponent extends React.Component<Props, State> {
             this.setState({ credentials })
 
             this.configManager.saveCredentials(name, credentials)
-            this.writeLocalConfig(name, credentials.url)
+            this.configManager.writeLocalConfig(name, credentials.url)
             await this.installAndConfigure()
         } catch (err) {
             this.setState({
@@ -226,19 +224,6 @@ class InitComponent extends React.Component<Props, State> {
         }
 
         return { success: true }
-    }
-
-    private writeLocalConfig(projectName: string, url: string): void {
-        const configPath = path.join(process.cwd(), '.regressionproof.json')
-        const version = getCliVersion()
-        const payload = {
-            version,
-            projectName,
-            remote: {
-                url,
-            },
-        }
-        writeFileSync(configPath, JSON.stringify(payload, null, 2))
     }
 
     private getPackageManager(): PackageManager {

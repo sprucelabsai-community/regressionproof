@@ -3,7 +3,6 @@ import fs from 'fs'
 import path from 'path'
 import ConfigManager from '../../config/ConfigManager.js'
 import { toSlug } from '../../utilities/slug.js'
-import { getCliVersion } from '../../utilities/version.js'
 
 const API_URL =
     process.env.REGRESSIONPROOF_API_URL ?? 'https://api.regressionproof.ai'
@@ -29,7 +28,7 @@ export default async function acceptInvite(token: string): Promise<void> {
         url: data.url,
         token: data.token,
     })
-    writeLocalConfig(process.cwd(), projectName, data.url)
+    configManager.writeLocalConfig(projectName, data.url)
     ensureMirrorCloned(
         configManager.getConfigDir(projectName),
         data.url,
@@ -46,19 +45,6 @@ function deriveProjectNameFromUrl(url: string): string {
         throw new Error(`Unable to determine project name from url: ${url}`)
     }
     return name
-}
-
-function writeLocalConfig(cwd: string, projectName: string, url: string): void {
-    const configPath = path.join(cwd, '.regressionproof.json')
-    const version = getCliVersion()
-    const payload = {
-        version,
-        projectName,
-        remote: {
-            url,
-        },
-    }
-    fs.writeFileSync(configPath, JSON.stringify(payload, null, 2))
 }
 
 function ensureMirrorCloned(

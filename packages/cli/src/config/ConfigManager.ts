@@ -1,6 +1,7 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
+import { getCliVersion } from '../utilities/version.js'
 
 export default class ConfigManager {
     private baseDir: string
@@ -48,6 +49,18 @@ export default class ConfigManager {
             url: config.remote.url,
             token: config.remote.token,
         }
+    }
+
+    public writeLocalConfig(projectName: string, url: string): void {
+        const configPath = path.join(process.cwd(), '.regressionproof.json')
+        const payload = {
+            version: getCliVersion(),
+            projectName,
+            remote: {
+                url,
+            },
+        }
+        fs.writeFileSync(configPath, JSON.stringify(payload, null, 2))
     }
 }
 
