@@ -40,12 +40,12 @@ export async function gitPush(
 ): Promise<void> {
     const authedUrl = remote.url.replace('://', `://${remote.token}@`)
 
-    try {
-        await execOrThrow(`git -C "${mirrorPath}" remote get-url origin`, log)
+    const originExists = await remoteExists(mirrorPath, 'origin')
+    if (originExists) {
         await execOrThrow(
             `git -C "${mirrorPath}" remote set-url origin "${authedUrl}"`
         )
-    } catch {
+    } else {
         await execOrThrow(
             `git -C "${mirrorPath}" remote add origin "${authedUrl}"`
         )
@@ -57,6 +57,19 @@ export async function gitPush(
     }
 
     await execOrThrow(`git -C "${mirrorPath}" push -u origin HEAD`, log)
+}
+
+async function remoteExists(
+    mirrorPath: string,
+    remoteName: string
+): Promise<boolean> {
+    try {
+        const { stdout } = await execAsync(`git -C "${mirrorPath}" remote`)
+        const remotes = stdout.trim().split('\n')
+        return remotes.includes(remoteName)
+    } catch {
+        return false
+    }
 }
 
 async function hasRemoteHead(mirrorPath: string): Promise<boolean> {
