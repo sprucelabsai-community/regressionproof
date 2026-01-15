@@ -7,6 +7,19 @@ export interface TestResult {
     error?: string
 }
 
+export interface TypeCheckError {
+    /** File path relative to project root */
+    file: string
+    /** Line number (1-indexed) */
+    line: number
+    /** Column number (1-indexed) */
+    column: number
+    /** TypeScript error code (e.g., "TS2322") */
+    code: string
+    /** Error message */
+    message: string
+}
+
 export interface SuiteResult {
     /** Path to test file, relative to project root */
     path: string
@@ -38,6 +51,8 @@ export interface TestResults {
     summary: TestResultsSummary
     /** Array of suite results */
     suites: SuiteResult[]
+    /** TypeScript type check errors (only present if project has tsconfig.json) */
+    typeErrors?: TypeCheckError[]
 }
 
 export interface RemoteOptions {

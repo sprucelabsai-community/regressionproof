@@ -61,8 +61,23 @@ function sortTestResults(
     }))
     suites.sort((left, right) => left.path.localeCompare(right.path))
 
+    const typeErrors = testResults.typeErrors
+        ? [...testResults.typeErrors].sort((left, right) => {
+              const fileCompare = left.file.localeCompare(right.file)
+              if (fileCompare !== 0) {
+                  return fileCompare
+              }
+              const lineCompare = left.line - right.line
+              if (lineCompare !== 0) {
+                  return lineCompare
+              }
+              return left.column - right.column
+          })
+        : undefined
+
     return {
         ...testResults,
         suites,
+        typeErrors,
     }
 }
