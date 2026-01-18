@@ -26,7 +26,7 @@ export async function syncFiles(
     const excludes = DEFAULT_EXCLUDES.map((e) => `--exclude='${e}'`).join(' ')
 
     if (hasGitIgnore) {
-        const cmd = `cd "${sourcePath}" && git ls-files --cached --others --exclude-standard -z | rsync -av --files-from=- --from0 ${excludes} . "${mirrorPath}/"`
+        const cmd = `cd "${sourcePath}" && git ls-files --cached --others --exclude-standard -z | rsync -av --ignore-missing-args --files-from=- --from0 ${excludes} . "${mirrorPath}/"`
         await execAsync(cmd)
     } else {
         const cmd = `rsync -av --delete ${excludes} "${sourcePath}/" "${mirrorPath}/"`
