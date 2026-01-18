@@ -11,7 +11,7 @@ export function captureTypeErrors(projectRoot: string): TypeCheckError[] {
     }
 
     try {
-        execSync('tsc --noEmit --pretty false', {
+        execSync('npx tsc --noEmit --pretty false', {
             cwd: projectRoot,
             encoding: 'utf-8',
             stdio: ['pipe', 'pipe', 'pipe'],
