@@ -73,14 +73,25 @@ export default class RegressionProofReporter implements Reporter {
             )
         }
 
-        snapshot({
-            sourcePath: this.cwd,
-            mirrorPath: config.mirrorPath,
-            testResults,
-            remote: config.remote,
-        })
+        try {
+            const committed = await snapshot({
+                sourcePath: this.cwd,
+                mirrorPath: config.mirrorPath,
+                testResults,
+                remote: config.remote,
+            })
 
-        console.log('[RegressionProof] Snapshot queued')
+            if (committed) {
+                console.log('[RegressionProof] Snapshot captured successfully')
+            } else {
+                console.log('[RegressionProof] No changes to snapshot')
+            }
+        } catch (err) {
+            console.error(
+                '[RegressionProof] Failed to capture snapshot:',
+                err instanceof Error ? err.message : err
+            )
+        }
     }
 
     public getLastError(): Error | void {
