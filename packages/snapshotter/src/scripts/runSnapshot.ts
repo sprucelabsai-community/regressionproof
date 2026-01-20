@@ -1,17 +1,10 @@
-import {
-    existsSync,
-    mkdirSync,
-    readFileSync,
-    unlinkSync,
-    writeFileSync,
-} from 'fs'
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import path from 'path'
 import { buildLog } from '@sprucelabs/spruce-skill-utils'
-import { gitCommit, gitPush } from '../git.js'
+import ErrorHandler from '../components/ErrorHandler.js'
 import { SnapshotOptions } from '../snapshotter.types.js'
-import { syncFiles } from '../sync.js'
+import SyncStrategy from '../strategies/SyncStrategy.js'
 
-const ERROR_FILE_NAME = 'lastError.json'
 const LOCK_FILE_NAME = 'snapshot.lock'
 const PENDING_FILE_NAME = 'pending.json'
 const log = buildLog('Snapshotter')
@@ -56,98 +49,12 @@ async function processLoop(snapshotterDir: string): Promise<void> {
 }
 
 async function executeSnapshot(options: SnapshotOptions): Promise<void> {
-    const sourcePath = options.sourcePath ?? process.cwd()
-    const { mirrorPath, testResults, remote } = options
-
-    log.info('Starting snapshot', sourcePath, mirrorPath)
-
     try {
-        await syncFiles(sourcePath, mirrorPath)
-        log.info('Files synced', mirrorPath)
-
-        const snapshotterDir = path.join(mirrorPath, '.snapshotter')
-        mkdirSync(snapshotterDir, { recursive: true })
-        writeFileSync(
-            path.join(snapshotterDir, 'testResults.json'),
-            JSON.stringify(sortTestResults(testResults), null, 2)
-        )
-        log.info('Test results saved', snapshotterDir)
-
-        const committed = await gitCommit(mirrorPath, log)
-
-        if (!committed) {
-            log.info('No changes to commit', mirrorPath)
-            clearError(mirrorPath)
-            return
-        }
-
-        log.info('Commit created, pushing', remote.url)
-        await gitPush(mirrorPath, remote, log)
-        log.info('Push completed', remote.url)
-
-        clearError(mirrorPath)
+        await SyncStrategy.Strategy().execute(options)
     } catch (err) {
         const message = err instanceof Error ? err.message : String(err)
         log.error('Snapshot failed (will surface on next test run)', message)
-        persistError(mirrorPath, err)
-    }
-}
-
-function persistError(mirrorPath: string, err: unknown): void {
-    const snapshotterDir = path.join(mirrorPath, '.snapshotter')
-    mkdirSync(snapshotterDir, { recursive: true })
-
-    const errorPath = getErrorFilePath(mirrorPath)
-    const errorData = {
-        message: err instanceof Error ? err.message : String(err),
-        stack: err instanceof Error ? err.stack : undefined,
-        timestamp: new Date().toISOString(),
-    }
-
-    writeFileSync(errorPath, JSON.stringify(errorData, null, 2))
-}
-
-function clearError(mirrorPath: string): void {
-    const errorPath = getErrorFilePath(mirrorPath)
-
-    if (existsSync(errorPath)) {
-        unlinkSync(errorPath)
-    }
-}
-
-function getErrorFilePath(mirrorPath: string): string {
-    return path.join(mirrorPath, '.snapshotter', ERROR_FILE_NAME)
-}
-
-function sortTestResults(
-    testResults: SnapshotOptions['testResults']
-): SnapshotOptions['testResults'] {
-    const suites = [...testResults.suites].map((suite) => ({
-        ...suite,
-        tests: [...suite.tests].sort((left, right) =>
-            left.name.localeCompare(right.name)
-        ),
-    }))
-    suites.sort((left, right) => left.path.localeCompare(right.path))
-
-    const typeErrors = testResults.typeErrors
-        ? [...testResults.typeErrors].sort((left, right) => {
-              const fileCompare = left.file.localeCompare(right.file)
-              if (fileCompare !== 0) {
-                  return fileCompare
-              }
-              const lineCompare = left.line - right.line
-              if (lineCompare !== 0) {
-                  return lineCompare
-              }
-              return left.column - right.column
-          })
-        : undefined
-
-    return {
-        ...testResults,
-        suites,
-        typeErrors,
+        ErrorHandler.Handler().persistError(options.mirrorPath, err)
     }
 }
 

@@ -6,10 +6,7 @@ import type {
     TestCaseResult,
     TestContext,
 } from '@jest/reporters'
-import {
-    checkForPreviousSnapshotFailure,
-    snapshot,
-} from '@regressionproof/snapshotter'
+import { Snapshotter } from '@regressionproof/snapshotter'
 import {
     loadConfig,
     detectProjectName,
@@ -24,6 +21,7 @@ export default class RegressionProofReporter implements Reporter {
     private cwd: string
     private isCi: boolean
     private config: ReporterConfig | null = null
+    private snapshotter = Snapshotter.Snapshotter({ mode: 'sync' })
 
     public constructor(_globalConfig?: unknown, _reporterConfig?: unknown) {
         this.cwd = process.cwd()
@@ -51,7 +49,7 @@ export default class RegressionProofReporter implements Reporter {
             })
         }
 
-        checkForPreviousSnapshotFailure(this.config.mirrorPath)
+        this.snapshotter.checkForPreviousFailure(this.config.mirrorPath)
     }
 
     public onTestFileStart(_test: Test): void {}
@@ -91,14 +89,14 @@ export default class RegressionProofReporter implements Reporter {
             )
         }
 
-        snapshot({
+        await this.snapshotter.snapshot({
             sourcePath: this.cwd,
             mirrorPath: this.config.mirrorPath,
             testResults,
             remote: this.config.remote,
         })
 
-        console.log('[RegressionProof] Snapshot queued')
+        console.log('[RegressionProof] Snapshot complete')
     }
 
     public getLastError(): Error | void {

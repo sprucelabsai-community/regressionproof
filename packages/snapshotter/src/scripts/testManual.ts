@@ -1,4 +1,4 @@
-import { snapshot } from '../index'
+import { Snapshotter } from '../index'
 
 async function main() {
     const sourcePath = process.env.SOURCE_PATH
@@ -16,7 +16,9 @@ async function main() {
     console.log('  Mirror:', mirrorPath)
     console.log('  Remote:', remoteUrl)
 
-    const result = await snapshot({
+    const snapshotter = Snapshotter.Snapshotter({ mode: 'sync' })
+
+    await snapshotter.snapshot({
         sourcePath,
         mirrorPath,
         testResults: {
@@ -46,7 +48,7 @@ async function main() {
         },
     })
 
-    console.log('Snapshot created:', result)
+    console.log('Snapshot completed')
 }
 
 main().catch((err) => {
