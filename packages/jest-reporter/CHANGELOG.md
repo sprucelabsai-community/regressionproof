@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/sprucelabsai-community/regressionproof/compare/v0.6.5...v0.7.0) (2026-01-20)
+
+
+### Features
+
+* async snapshots with detached process and fail-fast checks ([a075be2](https://github.com/sprucelabsai-community/regressionproof/commit/a075be2))
+
+
+
+
+
 ## [0.6.5](https://github.com/sprucelabsai-community/regressionproof/compare/v0.6.4...v0.6.5) (2026-01-20)
 
 **Note:** Version bump only for package @regressionproof/jest-reporter
