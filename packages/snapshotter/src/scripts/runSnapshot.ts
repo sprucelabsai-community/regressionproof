@@ -10,14 +10,14 @@ const PENDING_FILE_NAME = 'pending.json'
 const log = buildLog('Snapshotter')
 
 async function main() {
-    const snapshotterDir = process.argv[2]
+    const stateDir = process.argv[2]
 
-    if (!snapshotterDir) {
-        console.error('Usage: runSnapshot <snapshotter-dir>')
+    if (!stateDir) {
+        console.error('Usage: runSnapshot <state-dir>')
         process.exit(1)
     }
 
-    const lockPath = path.join(snapshotterDir, LOCK_FILE_NAME)
+    const lockPath = path.join(stateDir, LOCK_FILE_NAME)
 
     if (existsSync(lockPath)) {
         log.info('Another snapshot is running, exiting')
@@ -26,7 +26,7 @@ async function main() {
 
     try {
         writeFileSync(lockPath, process.pid.toString())
-        await processLoop(snapshotterDir)
+        await processLoop(stateDir)
     } finally {
         if (existsSync(lockPath)) {
             unlinkSync(lockPath)
@@ -34,8 +34,8 @@ async function main() {
     }
 }
 
-async function processLoop(snapshotterDir: string): Promise<void> {
-    const pendingPath = path.join(snapshotterDir, PENDING_FILE_NAME)
+async function processLoop(stateDir: string): Promise<void> {
+    const pendingPath = path.join(stateDir, PENDING_FILE_NAME)
 
     while (existsSync(pendingPath)) {
         const options: SnapshotOptions = JSON.parse(

@@ -1,8 +1,9 @@
 import { spawn } from 'child_process'
-import { mkdirSync, writeFileSync } from 'fs'
+import { writeFileSync } from 'fs'
 import path from 'path'
 import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import { SnapshotOptions } from '../snapshotter.types.js'
+import SnapshotterState from '../utilities/SnapshotterState.js'
 import SnapshotStrategy from './SnapshotStrategy.js'
 
 export default class AsyncStrategy implements SnapshotStrategy {
@@ -16,8 +17,8 @@ export default class AsyncStrategy implements SnapshotStrategy {
     }
 
     public execute(options: SnapshotOptions): void {
-        const snapshotterDir = this.writeOptionsFile(options)
-        this.spawnSnapshotProcess(snapshotterDir)
+        const stateDir = this.writeOptionsFile(options)
+        this.spawnSnapshotProcess(stateDir)
 
         this.log.info(
             'Snapshot queued (running in background)',
@@ -26,17 +27,15 @@ export default class AsyncStrategy implements SnapshotStrategy {
     }
 
     private writeOptionsFile(options: SnapshotOptions): string {
-        const snapshotterDir = path.join(options.mirrorPath, '.snapshotter')
-        mkdirSync(snapshotterDir, { recursive: true })
-
-        const optionsPath = path.join(snapshotterDir, 'pending.json')
+        const stateDir = SnapshotterState.EnsureStateDir(options.mirrorPath)
+        const optionsPath = path.join(stateDir, 'pending.json')
         writeFileSync(optionsPath, JSON.stringify(options, null, 2))
 
-        return snapshotterDir
+        return stateDir
     }
 
-    private spawnSnapshotProcess(snapshotterDir: string): void {
-        const child = spawn('node', [this.scriptPath, snapshotterDir], {
+    private spawnSnapshotProcess(stateDir: string): void {
+        const child = spawn('node', [this.scriptPath, stateDir], {
             detached: true,
             stdio: 'ignore',
         })

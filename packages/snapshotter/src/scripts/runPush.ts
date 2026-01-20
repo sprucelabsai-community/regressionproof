@@ -1,9 +1,10 @@
-import { existsSync, mkdirSync, unlinkSync, writeFileSync } from 'fs'
+import { existsSync, unlinkSync, writeFileSync } from 'fs'
 import path from 'path'
 import { buildLog } from '@sprucelabs/spruce-skill-utils'
 import ErrorHandler from '../components/ErrorHandler.js'
 import { gitPush } from '../git.js'
 import type { RemoteOptions } from '../snapshotter.types.js'
+import SnapshotterState from '../utilities/SnapshotterState.js'
 
 const LOCK_FILE_NAME = 'push.lock'
 const PENDING_FILE_NAME = 'push.pending'
@@ -14,11 +15,10 @@ async function main() {
     const remoteUrl = getEnvOrExit('REMOTE_URL')
     const remoteToken = getEnvOrExit('REMOTE_TOKEN')
 
-    const snapshotterDir = path.join(mirrorPath, '.snapshotter')
-    mkdirSync(snapshotterDir, { recursive: true })
+    const stateDir = SnapshotterState.EnsureStateDir(mirrorPath)
 
-    const lockPath = path.join(snapshotterDir, LOCK_FILE_NAME)
-    const pendingPath = path.join(snapshotterDir, PENDING_FILE_NAME)
+    const lockPath = path.join(stateDir, LOCK_FILE_NAME)
+    const pendingPath = path.join(stateDir, PENDING_FILE_NAME)
 
     if (existsSync(lockPath)) {
         writeFileSync(pendingPath, new Date().toISOString())

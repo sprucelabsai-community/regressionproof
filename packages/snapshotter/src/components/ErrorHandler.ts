@@ -1,11 +1,6 @@
-import {
-    existsSync,
-    mkdirSync,
-    readFileSync,
-    unlinkSync,
-    writeFileSync,
-} from 'fs'
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import path from 'path'
+import SnapshotterState from '../utilities/SnapshotterState.js'
 
 export default class ErrorHandler {
     private static readonly ERROR_FILE_NAME = 'lastError.json'
@@ -33,8 +28,7 @@ export default class ErrorHandler {
     }
 
     public persistError(mirrorPath: string, err: unknown): void {
-        const snapshotterDir = path.join(mirrorPath, '.snapshotter')
-        mkdirSync(snapshotterDir, { recursive: true })
+        SnapshotterState.EnsureStateDir(mirrorPath)
 
         const errorPath = this.getErrorFilePath(mirrorPath)
         const errorData = {
@@ -55,10 +49,7 @@ export default class ErrorHandler {
     }
 
     private getErrorFilePath(mirrorPath: string): string {
-        return path.join(
-            mirrorPath,
-            '.snapshotter',
-            ErrorHandler.ERROR_FILE_NAME
-        )
+        const stateDir = SnapshotterState.GetStateDir(mirrorPath)
+        return path.join(stateDir, ErrorHandler.ERROR_FILE_NAME)
     }
 }

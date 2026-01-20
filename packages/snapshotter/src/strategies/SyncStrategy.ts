@@ -6,6 +6,7 @@ import FileSyncer from '../components/FileSyncer.js'
 import TestResultsWriter from '../components/TestResultsWriter.js'
 import { gitCommit } from '../git.js'
 import { SnapshotOptions } from '../snapshotter.types.js'
+import SnapshotterState from '../utilities/SnapshotterState.js'
 import SnapshotStrategy from './SnapshotStrategy.js'
 
 export default class SyncStrategy implements SnapshotStrategy {
@@ -26,6 +27,7 @@ export default class SyncStrategy implements SnapshotStrategy {
 
         try {
             await FileSyncer.Syncer().sync(sourcePath, mirrorPath)
+            SnapshotterState.CleanupLegacyMirrorState(mirrorPath)
             this.log.info('Files synced', mirrorPath)
 
             TestResultsWriter.Writer().write(mirrorPath, testResults)
