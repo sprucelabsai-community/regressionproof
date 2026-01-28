@@ -70,7 +70,9 @@ export default class ConfigManager {
         }
 
         try {
-            return JSON.parse(fs.readFileSync(configPath, 'utf-8')) as LocalConfig
+            return JSON.parse(
+                fs.readFileSync(configPath, 'utf-8')
+            ) as LocalConfig
         } catch {
             return null
         }

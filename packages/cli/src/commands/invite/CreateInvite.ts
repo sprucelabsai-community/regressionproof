@@ -36,9 +36,7 @@ class InviteCreator {
 
     private resolveProjectName(projectNameArg?: string): string {
         const provided = projectNameArg ? toSlug(projectNameArg) : ''
-        const name =
-            provided ||
-            this.configManager.getLocalProjectName()
+        const name = provided || this.configManager.getLocalProjectName()
         if (!name) {
             throw new Error(
                 'Project name is required. Provide it explicitly or ensure .regressionproof.json exists.'
