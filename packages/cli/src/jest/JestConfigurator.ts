@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import JestReporterConfigInspector from './JestReporterConfigInspector.js'
 
 export default class JestConfigurator {
     private cwd: string
@@ -10,6 +11,15 @@ export default class JestConfigurator {
     }
 
     public configure(): JestConfigResult {
+        const inspector = new JestReporterConfigInspector()
+        const inspection = inspector.inspect(this.cwd)
+        if (inspection.isConfigured) {
+            return {
+                configured: true,
+                location: inspection.configuredLocations[0],
+            }
+        }
+
         return (
             this.tryConfigurePackageJson() ??
             this.tryConfigureJestConfig('jest.config.ts') ??
