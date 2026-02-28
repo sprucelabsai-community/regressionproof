@@ -1,0 +1,482 @@
+[
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/REVERSE_ENGINEERING_TDD.md",
+    "size": 22292,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/STATUS.md",
+    "size": 3412,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/README.md",
+    "size": 18,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/AGENTS.md",
+    "size": 777,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/training.md",
+    "size": 997,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/ideology/great_software.md",
+    "size": 757,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/ideology/architecture.md",
+    "size": 693,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/ideology/clean-code.md",
+    "size": 661,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/ideology/tdd.md",
+    "size": 716,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/ideology/the_fourth_runtime.md",
+    "size": 731,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/ideology/ideology.md",
+    "size": 684,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/from-scratch.md",
+    "size": 1911,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/development-theatre.md",
+    "size": 707,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/getting-started.md",
+    "size": 1561,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/manual-install.md",
+    "size": 2076,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/install-cli.md",
+    "size": 891,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/permissions.md",
+    "size": 13476,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/messages.md",
+    "size": 30101,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/schemas.md",
+    "size": 1346,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/dates-times.md",
+    "size": 34916,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/scope.md",
+    "size": 5803,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/concepts.md",
+    "size": 1652,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/uploads.md",
+    "size": 5035,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/errors.md",
+    "size": 6606,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/tests.md",
+    "size": 2424,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/listeners.md",
+    "size": 405,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/skills.md",
+    "size": 3841,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/stores.md",
+    "size": 4142,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/mercury.md",
+    "size": 1699,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/events.md",
+    "size": 6172,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/theatre.md",
+    "size": 18860,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/spruce-cli.md",
+    "size": 13484,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/help/github-issues.md",
+    "size": 190,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/help/keyboard-shortcuts.md",
+    "size": 4376,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/help/glossary.md",
+    "size": 3308,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/help/contact.md",
+    "size": 150,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/help/common-commands.md",
+    "size": 197,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/help/help.md",
+    "size": 2698,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/help/new-example.md",
+    "size": 289,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/rendering-skill-views.md",
+    "size": 6171,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/login-card.md",
+    "size": 1974,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/rendering-dialogs.md",
+    "size": 28907,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/important-classes.md",
+    "size": 154215,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/app-view-controller.md",
+    "size": 38,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/rendering-layouts.md",
+    "size": 2787,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/views.md",
+    "size": 6184,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/crud.md",
+    "size": 10782,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/rendering-forms.md",
+    "size": 31171,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/navigation.md",
+    "size": 399,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/skill-view-lifecycle.md",
+    "size": 3147,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/rendering-location-address.md",
+    "size": 338,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/rendering-cards.md",
+    "size": 46695,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/root-skill-view.md",
+    "size": 15682,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/concepts/views/view-controller-plugins.md",
+    "size": 2918,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/spring.md",
+    "size": 13053,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/python.md",
+    "size": 7539,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/android.md",
+    "size": 7740,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/groovy.md",
+    "size": 11880,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/laravel.md",
+    "size": 9915,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/django.md",
+    "size": 7841,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/react.md",
+    "size": 7492,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/ios.md",
+    "size": 5804,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/ruby.md",
+    "size": 9145,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/dot-net.md",
+    "size": 13840,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/frameworks/flask.md",
+    "size": 10770,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/ui-design.md",
+    "size": 510,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/data-persistence.md",
+    "size": 626,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/event-handling.md",
+    "size": 570,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/ide.md",
+    "size": 159,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/testing.md",
+    "size": 241,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/programming-language.md",
+    "size": 1075,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/error-handling.md",
+    "size": 649,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/user-authentication.md",
+    "size": 564,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/app-lifecycle.md",
+    "size": 326,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/getting-started/includes/spruce/user-permissions.md",
+    "size": 662,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/dashboard.md",
+    "size": 2040,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/customizing-your-bedtime-story.md",
+    "size": 4281,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/share-story.md",
+    "size": 4385,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/building-a-skill.md",
+    "size": 3006,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/generating-a-story.md",
+    "size": 6036,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/wireframes.md",
+    "size": 2614,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/your-family-members.md",
+    "size": 908,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/your-family-values.md",
+    "size": 6462,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/open-ai-setup.md",
+    "size": 889,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/onboarding.md",
+    "size": 463,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/building-a-skill/feedback.md",
+    "size": 5652,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/permissions.md",
+    "size": 2877,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/schemas.md",
+    "size": 2865,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/views.md",
+    "size": 17874,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/errors.md",
+    "size": 2868,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/listeners.md",
+    "size": 2874,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/stores.md",
+    "size": 2868,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/events.md",
+    "size": 24229,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/katas.md",
+    "size": 2480,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/includes/tests_up_to_card_with_button.md",
+    "size": 7847,
+    "source": "spruce-documentation"
+  },
+  {
+    "path": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation/src/pages/training/katas/includes/kata_setup.md",
+    "size": 2740,
+    "source": "spruce-documentation"
+  }
+]

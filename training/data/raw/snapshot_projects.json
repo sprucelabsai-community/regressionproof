@@ -1,0 +1,102 @@
+[
+  {
+    "project": "heartwood-view-controllers",
+    "projectPath": "/Users/taylorromero/.regressionproof/heartwood-view-controllers",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/heartwood-view-controllers/mirror",
+    "hasMirror": true,
+    "hasGit": true,
+    "hasConfig": true,
+    "hasLatestTestResults": true,
+    "commitCount": 340
+  },
+  {
+    "project": "odin-odin-skill",
+    "projectPath": "/Users/taylorromero/.regressionproof/odin-odin-skill",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/odin-odin-skill/mirror",
+    "hasMirror": true,
+    "hasGit": true,
+    "hasConfig": true,
+    "hasLatestTestResults": true,
+    "commitCount": 184
+  },
+  {
+    "project": "offtake-riverside-skill",
+    "projectPath": "/Users/taylorromero/.regressionproof/offtake-riverside-skill",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/offtake-riverside-skill/mirror",
+    "hasMirror": true,
+    "hasGit": true,
+    "hasConfig": true,
+    "hasLatestTestResults": true,
+    "commitCount": 3122
+  },
+  {
+    "project": "spruce-documentation-samples-skill",
+    "projectPath": "/Users/taylorromero/.regressionproof/spruce-documentation-samples-skill",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/spruce-documentation-samples-skill/mirror",
+    "hasMirror": true,
+    "hasGit": true,
+    "hasConfig": true,
+    "hasLatestTestResults": true,
+    "commitCount": 7
+  },
+  {
+    "project": "spruce-features-workspace",
+    "projectPath": "/Users/taylorromero/.regressionproof/spruce-features-workspace",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/spruce-features-workspace/mirror",
+    "hasMirror": false,
+    "hasGit": false,
+    "hasConfig": true,
+    "hasLatestTestResults": false,
+    "commitCount": 0
+  },
+  {
+    "project": "spruce-heartwood-skill",
+    "projectPath": "/Users/taylorromero/.regressionproof/spruce-heartwood-skill",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/spruce-heartwood-skill/mirror",
+    "hasMirror": true,
+    "hasGit": true,
+    "hasConfig": true,
+    "hasLatestTestResults": true,
+    "commitCount": 537
+  },
+  {
+    "project": "spruce-mercury-api",
+    "projectPath": "/Users/taylorromero/.regressionproof/spruce-mercury-api",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/spruce-mercury-api/mirror",
+    "hasMirror": true,
+    "hasGit": true,
+    "hasConfig": true,
+    "hasLatestTestResults": true,
+    "commitCount": 52
+  },
+  {
+    "project": "spruce-profile-skill",
+    "projectPath": "/Users/taylorromero/.regressionproof/spruce-profile-skill",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/spruce-profile-skill/mirror",
+    "hasMirror": true,
+    "hasGit": true,
+    "hasConfig": true,
+    "hasLatestTestResults": true,
+    "commitCount": 66
+  },
+  {
+    "project": "spruce-seven-shifts-skill",
+    "projectPath": "/Users/taylorromero/.regressionproof/spruce-seven-shifts-skill",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/spruce-seven-shifts-skill/mirror",
+    "hasMirror": true,
+    "hasGit": true,
+    "hasConfig": true,
+    "hasLatestTestResults": true,
+    "commitCount": 2217
+  },
+  {
+    "project": "sprucebot-llm",
+    "projectPath": "/Users/taylorromero/.regressionproof/sprucebot-llm",
+    "mirrorPath": "/Users/taylorromero/.regressionproof/sprucebot-llm/mirror",
+    "hasMirror": true,
+    "hasGit": true,
+    "hasConfig": true,
+    "hasLatestTestResults": true,
+    "commitCount": 1926
+  }
+]
