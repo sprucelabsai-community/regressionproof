@@ -3,6 +3,13 @@ import os
 from pathlib import Path
 
 
+def resolve_model_source():
+    model_source = os.environ.get("ROUND1_MODEL_SOURCE") or os.environ.get(
+        "ROUND1_MODEL_ID", "Qwen/Qwen2.5-Coder-7B-Instruct"
+    )
+    return model_source, Path(model_source).exists()
+
+
 def write_blocked_outputs(reason: str):
     outputs = {
         "reports/baseline_snapshot_predictions.jsonl": "snapshot_repair",
@@ -21,10 +28,15 @@ except ModuleNotFoundError as error:
     write_blocked_outputs(f"missing_dependency:{error.name}")
     raise SystemExit(0)
 
-MODEL_ID = os.environ.get("ROUND1_MODEL_ID", "Qwen/Qwen2.5-Coder-7B-Instruct")
+MODEL_ID, LOCAL_FILES_ONLY = resolve_model_source()
 try:
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-    model = AutoModelForCausalLM.from_pretrained(MODEL_ID, device_map="auto", torch_dtype="auto")
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, local_files_only=LOCAL_FILES_ONLY)
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_ID,
+        device_map="auto",
+        torch_dtype="auto",
+        local_files_only=LOCAL_FILES_ONLY,
+    )
 except Exception as error:
     write_blocked_outputs(f"model_load_failed:{type(error).__name__}")
     raise SystemExit(0)

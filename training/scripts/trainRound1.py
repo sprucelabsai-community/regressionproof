@@ -3,6 +3,13 @@ import os
 from pathlib import Path
 
 
+def resolve_model_source():
+    model_source = os.environ.get("ROUND1_MODEL_SOURCE") or os.environ.get(
+        "ROUND1_MODEL_ID", "Qwen/Qwen2.5-Coder-7B-Instruct"
+    )
+    return model_source, Path(model_source).exists()
+
+
 def write_blocked_output(reason: str):
     output_dir = Path("models") / os.environ.get("ROUND1_RUN_NAME", "round1-qwen25coder-7b-instruct-qlora")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -27,7 +34,7 @@ except Exception as error:
         write_blocked_output(f"runtime_import_failed:{type(error).__name__}")
     raise SystemExit(0)
 
-MODEL_ID = os.environ.get("ROUND1_MODEL_ID", "Qwen/Qwen2.5-Coder-7B-Instruct")
+MODEL_ID, LOCAL_FILES_ONLY = resolve_model_source()
 RUN_NAME = os.environ.get("ROUND1_RUN_NAME", "round1-qwen25coder-7b-instruct-qlora")
 MAX_SEQ_LEN = int(os.environ.get("ROUND1_MAX_SEQ_LEN", "4096"))
 
@@ -40,7 +47,7 @@ try:
         },
     )
 
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, local_files_only=LOCAL_FILES_ONLY)
     tokenizer.pad_token = tokenizer.eos_token
 except Exception as error:
     write_blocked_output(f"runtime_setup_failed:{type(error).__name__}")
@@ -73,6 +80,7 @@ try:
         quantization_config=quant_config,
         device_map="auto",
         torch_dtype=torch.bfloat16,
+        local_files_only=LOCAL_FILES_ONLY,
     )
     model = prepare_model_for_kbit_training(model)
 except Exception as error:

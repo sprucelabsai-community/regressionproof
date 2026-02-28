@@ -3,6 +3,13 @@ import os
 from pathlib import Path
 
 
+def resolve_model_source():
+    model_source = os.environ.get("ROUND1_MODEL_SOURCE") or os.environ.get(
+        "ROUND1_MODEL_ID", "Qwen/Qwen2.5-Coder-7B-Instruct"
+    )
+    return model_source, Path(model_source).exists()
+
+
 def write_blocked_outputs(reason: str):
     outputs = {
         "reports/finetuned_snapshot_predictions.jsonl": "snapshot_repair",
@@ -24,12 +31,17 @@ except Exception as error:
         write_blocked_outputs(f"runtime_import_failed:{type(error).__name__}")
     raise SystemExit(0)
 
-BASE = os.environ.get("ROUND1_MODEL_ID", "Qwen/Qwen2.5-Coder-7B-Instruct")
+BASE, LOCAL_FILES_ONLY = resolve_model_source()
 ADAPTER = f"models/{os.environ.get('ROUND1_RUN_NAME', 'round1-qwen25coder-7b-instruct-qlora')}/final"
 
 try:
     tokenizer = AutoTokenizer.from_pretrained(ADAPTER)
-    base_model = AutoModelForCausalLM.from_pretrained(BASE, device_map="auto", torch_dtype="auto")
+    base_model = AutoModelForCausalLM.from_pretrained(
+        BASE,
+        device_map="auto",
+        torch_dtype="auto",
+        local_files_only=LOCAL_FILES_ONLY,
+    )
     model = PeftModel.from_pretrained(base_model, ADAPTER)
 except Exception as error:
     write_blocked_outputs(f"model_load_failed:{type(error).__name__}")
