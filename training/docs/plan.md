@@ -13,6 +13,9 @@ Plan status:
 - `[ ]` Step 10: Fine-tune the first model with QLoRA
 - `[ ]` Step 11: Run post-train execution evaluation and compare against baseline
 - `[ ]` Step 12: Package the run and freeze the artifacts
+- `[ ]` Step 13: Export the trained model into a serving-ready artifact
+- `[ ]` Step 14: Host the model behind a URL with an OpenAI-compatible API
+- `[ ]` Step 15: Register the served model by name and route requests to it
 
 ## Step 1: Lock the `training/` workspace and Python runtime
 
@@ -907,6 +910,272 @@ set +a
 bash scripts/packageRound1.sh
 ls -lh runs
 ```
+
+## Step 13: Export the trained model into a serving-ready artifact
+
+Files to add:
+- `training/scripts/exportRound1ForServing.py`
+- `training/config/serving/round1-serving.env`
+- `training/models/round1-qwen25coder-7b-instruct-qlora/serving/`
+
+Serving requirement:
+- the trained model must be runnable behind a stable HTTP URL
+- the served model must be addressable by a stable name such as `round1-tdd-coder`
+- the deployment artifact must preserve the relationship to:
+  - regressionproof snapshot training data from `~/.regressionproof`
+  - Spruce documentation grounding data from `/Users/taylorromero/Development/SpruceLabs/spruce-documentation`
+
+`training/config/serving/round1-serving.env`
+
+```bash
+export ROUND1_SERVED_MODEL_NAME=round1-tdd-coder
+export ROUND1_BASE_MODEL_ID=Qwen/Qwen2.5-Coder-7B-Instruct
+export ROUND1_ADAPTER_DIR=models/round1-qwen25coder-7b-instruct-qlora/final
+export ROUND1_MERGED_MODEL_DIR=models/round1-qwen25coder-7b-instruct-qlora/serving/merged
+export ROUND1_SERVING_MANIFEST=models/round1-qwen25coder-7b-instruct-qlora/serving/manifest.json
+```
+
+`training/scripts/exportRound1ForServing.py`
+
+```python
+import json
+import os
+from pathlib import Path
+
+try:
+    from peft import AutoPeftModelForCausalLM
+    from transformers import AutoTokenizer
+except Exception as error:
+    output = Path(os.environ.get("ROUND1_SERVING_MANIFEST", "models/round1-qwen25coder-7b-instruct-qlora/serving/manifest.json"))
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(json.dumps({
+        "status": "blocked",
+        "reason": f"runtime_import_failed:{type(error).__name__}",
+    }, indent=2))
+    raise SystemExit(0)
+
+adapter_dir = os.environ["ROUND1_ADAPTER_DIR"]
+merged_dir = Path(os.environ["ROUND1_MERGED_MODEL_DIR"])
+manifest_path = Path(os.environ["ROUND1_SERVING_MANIFEST"])
+served_model_name = os.environ["ROUND1_SERVED_MODEL_NAME"]
+
+merged_dir.mkdir(parents=True, exist_ok=True)
+
+model = AutoPeftModelForCausalLM.from_pretrained(adapter_dir, device_map="cpu")
+merged_model = model.merge_and_unload()
+tokenizer = AutoTokenizer.from_pretrained(adapter_dir)
+
+merged_model.save_pretrained(merged_dir)
+tokenizer.save_pretrained(merged_dir)
+
+manifest_path.write_text(json.dumps({
+    "status": "ready",
+    "servedModelName": served_model_name,
+    "artifactPath": str(merged_dir),
+    "baseModelId": os.environ["ROUND1_BASE_MODEL_ID"],
+    "adapterDir": adapter_dir,
+    "snapshotRoot": os.path.expanduser("~/.regressionproof"),
+    "docsRoot": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation",
+}, indent=2))
+
+print(manifest_path.read_text())
+```
+
+Commands:
+
+```bash
+cd /Users/taylorromero/Development/SpruceLabs/regressionproof/training
+source .venv310/bin/activate
+set -a
+source config/round1.env
+source config/serving/round1-serving.env
+set +a
+python3 scripts/exportRound1ForServing.py
+cat models/round1-qwen25coder-7b-instruct-qlora/serving/manifest.json
+```
+
+## Step 14: Host the model behind a URL with an OpenAI-compatible API
+
+Files to add:
+- `training/scripts/startRound1Server.sh`
+- `training/config/serving/round1-vllm.env`
+- `training/logs/round1-server.log`
+
+Hosting approach:
+- serve the merged model through an OpenAI-compatible API
+- bind the server to a stable local or network URL
+- use a served model name so clients can address it without hard-coding filesystem paths
+
+`training/config/serving/round1-vllm.env`
+
+```bash
+export ROUND1_SERVER_HOST=0.0.0.0
+export ROUND1_SERVER_PORT=8010
+export ROUND1_SERVER_URL=http://127.0.0.1:8010/v1
+export ROUND1_GPU_MEMORY_UTILIZATION=0.90
+```
+
+`training/scripts/startRound1Server.sh`
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+: "${ROUND1_MERGED_MODEL_DIR:?ROUND1_MERGED_MODEL_DIR is required}"
+: "${ROUND1_SERVED_MODEL_NAME:?ROUND1_SERVED_MODEL_NAME is required}"
+: "${ROUND1_SERVER_HOST:?ROUND1_SERVER_HOST is required}"
+: "${ROUND1_SERVER_PORT:?ROUND1_SERVER_PORT is required}"
+
+mkdir -p logs
+
+python3 -m vllm.entrypoints.openai.api_server \
+  --host "$ROUND1_SERVER_HOST" \
+  --port "$ROUND1_SERVER_PORT" \
+  --model "$ROUND1_MERGED_MODEL_DIR" \
+  --served-model-name "$ROUND1_SERVED_MODEL_NAME" \
+  --gpu-memory-utilization "${ROUND1_GPU_MEMORY_UTILIZATION:-0.90}" \
+  > logs/round1-server.log 2>&1
+```
+
+Commands:
+
+```bash
+cd /Users/taylorromero/Development/SpruceLabs/regressionproof/training
+source .venv310/bin/activate
+set -a
+source config/round1.env
+source config/serving/round1-serving.env
+source config/serving/round1-vllm.env
+set +a
+bash scripts/startRound1Server.sh
+```
+
+Smoke test commands:
+
+```bash
+cd /Users/taylorromero/Development/SpruceLabs/regressionproof/training
+curl -s http://127.0.0.1:8010/v1/models | jq .
+curl -s http://127.0.0.1:8010/v1/chat/completions \
+  -H 'content-type: application/json' \
+  -d '{
+    "model": "round1-tdd-coder",
+    "messages": [
+      {"role": "system", "content": "You write TDD code by the three laws."},
+      {"role": "user", "content": "Write the next minimal failing test for a missing add(a, b) function."}
+    ],
+    "temperature": 0
+  }' | jq .
+```
+
+## Step 15: Register the served model by name and route requests to it
+
+Files to add:
+- `training/config/serving/model-registry.json`
+- `training/scripts/serveModelRegistry.py`
+- `training/scripts/testModelRegistry.sh`
+
+Addressability requirement:
+- callers must be able to use a stable model name instead of a raw host/port pair
+- the registry must map a model name to a serving URL and artifact metadata
+- the router must accept an OpenAI-style request and forward it to the correct backend by the `model` field
+
+`training/config/serving/model-registry.json`
+
+```json
+{
+  "round1-tdd-coder": {
+    "provider": "vllm",
+    "baseUrl": "http://127.0.0.1:8010/v1",
+    "chatCompletionsPath": "/chat/completions",
+    "modelsPath": "/models",
+    "artifactPath": "models/round1-qwen25coder-7b-instruct-qlora/serving/merged",
+    "snapshotRoot": "/Users/taylorromero/.regressionproof",
+    "docsRoot": "/Users/taylorromero/Development/SpruceLabs/spruce-documentation"
+  }
+}
+```
+
+`training/scripts/serveModelRegistry.py`
+
+```python
+import json
+import os
+from pathlib import Path
+
+import requests
+from flask import Flask, jsonify, request, Response
+
+registry = json.loads(Path("config/serving/model-registry.json").read_text())
+app = Flask(__name__)
+
+@app.get("/v1/models")
+def models():
+    return jsonify({
+        "data": [
+            {"id": model_name, **config}
+            for model_name, config in registry.items()
+        ]
+    })
+
+@app.post("/v1/chat/completions")
+def chat_completions():
+    payload = request.get_json(force=True)
+    model_name = payload["model"]
+    config = registry[model_name]
+    upstream = f"{config['baseUrl']}{config['chatCompletionsPath']}"
+    response = requests.post(upstream, json=payload, timeout=600)
+    return Response(
+        response.content,
+        status=response.status_code,
+        content_type=response.headers.get("content-type", "application/json"),
+    )
+
+if __name__ == "__main__":
+    host = os.environ.get("ROUND1_REGISTRY_HOST", "0.0.0.0")
+    port = int(os.environ.get("ROUND1_REGISTRY_PORT", "8020"))
+    app.run(host=host, port=port)
+```
+
+`training/scripts/testModelRegistry.sh`
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+curl -s http://127.0.0.1:8020/v1/models | jq .
+curl -s http://127.0.0.1:8020/v1/chat/completions \
+  -H 'content-type: application/json' \
+  -d '{
+    "model": "round1-tdd-coder",
+    "messages": [
+      {"role": "system", "content": "You write TDD code by the three laws."},
+      {"role": "user", "content": "Given a failing test, return only the next minimal diff."}
+    ],
+    "temperature": 0
+  }' | jq .
+```
+
+Commands:
+
+```bash
+cd /Users/taylorromero/Development/SpruceLabs/regressionproof/training
+source .venv310/bin/activate
+export ROUND1_REGISTRY_HOST=0.0.0.0
+export ROUND1_REGISTRY_PORT=8020
+python3 scripts/serveModelRegistry.py
+```
+
+Validation commands:
+
+```bash
+cd /Users/taylorromero/Development/SpruceLabs/regressionproof/training
+bash scripts/testModelRegistry.sh
+```
+
+Deployment gate:
+- Step 13 must produce a serving manifest with `status: "ready"` before Step 14 is considered ready
+- Step 14 must answer `GET /v1/models` and `POST /v1/chat/completions`
+- Step 15 must resolve `model: "round1-tdd-coder"` to the correct upstream URL without changing client payload shape
 
 ## Guardrail coverage
 
