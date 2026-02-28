@@ -10,9 +10,14 @@ for path in \
   config/round1.env \
   reports/baseline_snapshot_predictions.jsonl \
   reports/baseline_doc_predictions.jsonl \
+  reports/baseline_snapshot_exec_metrics.json \
+  reports/baseline_doc_metrics.json \
   reports/finetuned_snapshot_predictions.jsonl \
   reports/finetuned_doc_predictions.jsonl \
+  reports/finetuned_snapshot_exec_metrics.json \
+  reports/finetuned_doc_metrics.json \
   reports/round1_metrics.json \
+  reports/round1_report.md \
   reports/micro_step_eval_template.json \
   reports/snapshot_eval_template.json \
   logs/round1-train.log

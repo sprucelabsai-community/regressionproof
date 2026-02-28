@@ -1,0 +1,7 @@
+{
+  "status": "blocked",
+  "mode": "finetuned",
+  "doc_examples": 23,
+  "predictionsPath": "reports/finetuned_doc_predictions.jsonl",
+  "reason": "runtime_import_failed:ImportError"
+}

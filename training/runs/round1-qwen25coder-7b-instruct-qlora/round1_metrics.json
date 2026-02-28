@@ -1,19 +1,31 @@
 {
   "status": "blocked_or_incomplete",
   "baseline_snapshot": {
-    "status": "missing",
-    "path": "reports/baseline_snapshot_exec_metrics.json"
+    "status": "blocked",
+    "mode": "baseline",
+    "reason": "model_load_failed:OSError",
+    "predictionsPath": "reports/baseline_snapshot_predictions.jsonl",
+    "evalExamples": 50
   },
   "finetuned_snapshot": {
-    "status": "missing",
-    "path": "reports/finetuned_snapshot_exec_metrics.json"
+    "status": "blocked",
+    "mode": "finetuned",
+    "reason": "runtime_import_failed:ImportError",
+    "predictionsPath": "reports/finetuned_snapshot_predictions.jsonl",
+    "evalExamples": 50
   },
   "baseline_doc": {
-    "status": "missing",
-    "path": "reports/baseline_doc_metrics.json"
+    "status": "blocked",
+    "mode": "baseline",
+    "doc_examples": 23,
+    "predictionsPath": "reports/baseline_doc_predictions.jsonl",
+    "reason": "model_load_failed:OSError"
   },
   "finetuned_doc": {
-    "status": "missing",
-    "path": "reports/finetuned_doc_metrics.json"
+    "status": "blocked",
+    "mode": "finetuned",
+    "doc_examples": 23,
+    "predictionsPath": "reports/finetuned_doc_predictions.jsonl",
+    "reason": "runtime_import_failed:ImportError"
   }
 }
