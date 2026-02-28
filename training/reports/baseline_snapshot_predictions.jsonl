@@ -1,1 +1,1 @@
-{"kind": "snapshot_repair", "status": "blocked", "reason": "missing_dependency:torch"}
+{"kind": "snapshot_repair", "status": "blocked", "reason": "model_load_failed:OSError"}

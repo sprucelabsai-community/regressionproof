@@ -22,8 +22,12 @@ except ModuleNotFoundError as error:
     raise SystemExit(0)
 
 MODEL_ID = os.environ.get("ROUND1_MODEL_ID", "Qwen/Qwen2.5-Coder-7B-Instruct")
-tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-model = AutoModelForCausalLM.from_pretrained(MODEL_ID, device_map="auto", torch_dtype="auto")
+try:
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+    model = AutoModelForCausalLM.from_pretrained(MODEL_ID, device_map="auto", torch_dtype="auto")
+except Exception as error:
+    write_blocked_outputs(f"model_load_failed:{type(error).__name__}")
+    raise SystemExit(0)
 
 
 def run(source_path: str, target_path: str):

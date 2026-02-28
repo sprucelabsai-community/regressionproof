@@ -1,0 +1,7 @@
+{
+  "status": "blocked",
+  "mode": "baseline",
+  "doc_examples": 23,
+  "predictionsPath": "reports/baseline_doc_predictions.jsonl",
+  "reason": "model_load_failed:OSError"
+}
