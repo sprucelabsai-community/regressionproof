@@ -1,5 +1,10 @@
 # Round 1 Fine-Tuning Plan
 
+Round 1 execution target: Ubuntu with NVIDIA CUDA.
+`trainRound1.py` is CUDA-only for execution. MPS and Apple Silicon are not supported training targets.
+Before launching training on the Ubuntu machine, run:
+`cd training && source .venv310/bin/activate && set -a && source config/round1.env && set +a && python3 scripts/checkCudaEnvironment.py`
+
 Plan status:
 - `[ ]` Step 1: Lock the `training/` workspace and Python runtime
 - `[ ]` Step 2: Inventory regressionproof snapshot sources from `~/.regressionproof`
@@ -18,6 +23,10 @@ Plan status:
 - `[ ]` Step 15: Register the served model by name and route requests to it
 
 ## Step 1: Lock the `training/` workspace and Python runtime
+
+Execution note:
+- Dataset extraction and packaging can be prepared anywhere inside `training/`.
+- Actual model training must run on Ubuntu with CUDA, not on Apple Silicon or MPS.
 
 Files to add or overwrite:
 - `training/requirements.round1.txt`
@@ -78,6 +87,7 @@ export ROUND1_DOCS_ROOT="/Users/taylorromero/Development/SpruceLabs/spruce-docum
 export ROUND1_BNB_4BIT_QUANT_TYPE=nf4
 export ROUND1_BNB_4BIT_COMPUTE_DTYPE=bfloat16
 export ROUND1_BNB_4BIT_USE_DOUBLE_QUANT=true
+export HF_HOME="$PWD/tmp/hf"
 ```
 
 `training/scripts/verifyTrainingRoot.sh`
@@ -709,6 +719,11 @@ wc -l reports/baseline_snapshot_predictions.jsonl reports/baseline_doc_predictio
 
 ## Step 10: Fine-tune the first model with QLoRA
 
+Execution requirement:
+- `training/scripts/trainRound1.py` must run on Ubuntu with CUDA.
+- Do not run this stage on MPS or Apple Silicon.
+- Run `python3 scripts/checkCudaEnvironment.py` successfully before launching training.
+
 Files to add:
 - `training/config/accelerate.yaml`
 - `training/scripts/trainRound1.py`
@@ -823,6 +838,7 @@ Commands:
 ```bash
 cd /Users/taylorromero/Development/SpruceLabs/regressionproof/training
 source .venv/bin/activate
+python3 scripts/checkCudaEnvironment.py
 set -a
 source config/round1.env
 set +a
