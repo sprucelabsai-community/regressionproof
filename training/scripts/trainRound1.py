@@ -20,24 +20,31 @@ try:
         TrainingArguments,
     )
     from trl import SFTTrainer
-except ModuleNotFoundError as error:
-    write_blocked_output(f"missing_dependency:{error.name}")
+except Exception as error:
+    if isinstance(error, ModuleNotFoundError):
+        write_blocked_output(f"missing_dependency:{error.name}")
+    else:
+        write_blocked_output(f"runtime_import_failed:{type(error).__name__}")
     raise SystemExit(0)
 
 MODEL_ID = os.environ.get("ROUND1_MODEL_ID", "Qwen/Qwen2.5-Coder-7B-Instruct")
 RUN_NAME = os.environ.get("ROUND1_RUN_NAME", "round1-qwen25coder-7b-instruct-qlora")
 MAX_SEQ_LEN = int(os.environ.get("ROUND1_MAX_SEQ_LEN", "4096"))
 
-dataset = load_dataset(
-    "json",
-    data_files={
-        "train": "data/splits/train.jsonl",
-        "validation": "data/splits/val.jsonl",
-    },
-)
+try:
+    dataset = load_dataset(
+        "json",
+        data_files={
+            "train": "data/splits/train.jsonl",
+            "validation": "data/splits/val.jsonl",
+        },
+    )
 
-tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
-tokenizer.pad_token = tokenizer.eos_token
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_ID)
+    tokenizer.pad_token = tokenizer.eos_token
+except Exception as error:
+    write_blocked_output(f"runtime_setup_failed:{type(error).__name__}")
+    raise SystemExit(0)
 
 
 def format_row(row):
@@ -60,13 +67,17 @@ quant_config = BitsAndBytesConfig(
     == "true",
 )
 
-model = AutoModelForCausalLM.from_pretrained(
-    MODEL_ID,
-    quantization_config=quant_config,
-    device_map="auto",
-    torch_dtype=torch.bfloat16,
-)
-model = prepare_model_for_kbit_training(model)
+try:
+    model = AutoModelForCausalLM.from_pretrained(
+        MODEL_ID,
+        quantization_config=quant_config,
+        device_map="auto",
+        torch_dtype=torch.bfloat16,
+    )
+    model = prepare_model_for_kbit_training(model)
+except Exception as error:
+    write_blocked_output(f"model_load_failed:{type(error).__name__}")
+    raise SystemExit(0)
 
 peft_config = LoraConfig(
     r=int(os.environ.get("ROUND1_LORA_R", "32")),
@@ -95,18 +106,22 @@ args = TrainingArguments(
     run_name=RUN_NAME,
 )
 
-trainer = SFTTrainer(
-    model=model,
-    args=args,
-    train_dataset=dataset["train"],
-    eval_dataset=dataset["validation"],
-    processing_class=tokenizer,
-    peft_config=peft_config,
-    dataset_text_field="text",
-    max_length=MAX_SEQ_LEN,
-    assistant_only_loss=True,
-)
+try:
+    trainer = SFTTrainer(
+        model=model,
+        args=args,
+        train_dataset=dataset["train"],
+        eval_dataset=dataset["validation"],
+        processing_class=tokenizer,
+        peft_config=peft_config,
+        dataset_text_field="text",
+        max_length=MAX_SEQ_LEN,
+        assistant_only_loss=True,
+    )
 
-trainer.train()
-trainer.model.save_pretrained(f"models/{RUN_NAME}/final")
-tokenizer.save_pretrained(f"models/{RUN_NAME}/final")
+    trainer.train()
+    trainer.model.save_pretrained(f"models/{RUN_NAME}/final")
+    tokenizer.save_pretrained(f"models/{RUN_NAME}/final")
+except Exception as error:
+    write_blocked_output(f"training_failed:{type(error).__name__}")
+    raise SystemExit(0)
