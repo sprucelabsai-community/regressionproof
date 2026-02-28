@@ -1,0 +1,12 @@
+datasets==3.3.2
+pandas==2.3.2
+pyarrow==21.0.0
+pydantic==2.11.7
+scikit-learn==1.7.1
+transformers==4.55.4
+trl==0.21.0
+peft==0.17.1
+accelerate==1.10.1
+evaluate==0.4.5
+bitsandbytes==0.47.0
+sentencepiece==0.2.0

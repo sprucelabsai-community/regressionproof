@@ -1,0 +1,19 @@
+{
+  "status": "blocked_or_incomplete",
+  "baseline_snapshot": {
+    "status": "missing",
+    "path": "reports/baseline_snapshot_exec_metrics.json"
+  },
+  "finetuned_snapshot": {
+    "status": "missing",
+    "path": "reports/finetuned_snapshot_exec_metrics.json"
+  },
+  "baseline_doc": {
+    "status": "missing",
+    "path": "reports/baseline_doc_metrics.json"
+  },
+  "finetuned_doc": {
+    "status": "missing",
+    "path": "reports/finetuned_doc_metrics.json"
+  }
+}
