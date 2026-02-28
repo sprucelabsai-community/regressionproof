@@ -1,0 +1,552 @@
+[
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 0,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 1,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 2,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 3,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 4,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 5,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 6,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 7,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 8,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 9,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 10,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 11,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 12,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 13,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 14,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 15,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 16,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 17,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 18,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 19,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 20,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 21,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 22,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 23,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 24,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 25,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 26,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 27,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 28,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 29,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 30,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 31,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 32,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 33,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 34,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 35,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 36,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 37,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 38,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 39,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 40,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 41,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 42,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 43,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 44,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 45,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 46,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 47,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 48,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  },
+  {
+    "trajectoryId": "spruce-seven-shifts-skill:83d816c5baa4d3aad1942bd18c9bfbfed5a624ed",
+    "stepIndex": 49,
+    "status": "pending_micro_step_runner_definition",
+    "requiredMetrics": [
+      "diff_applies_cleanly",
+      "syntax_valid_after_apply",
+      "preserves_or_improves_test_status",
+      "failed_test_delta"
+    ]
+  }
+]
