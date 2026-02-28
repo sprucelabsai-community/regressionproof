@@ -17,16 +17,23 @@ def write_blocked_outputs(reason: str):
 try:
     from peft import PeftModel
     from transformers import AutoModelForCausalLM, AutoTokenizer
-except ModuleNotFoundError as error:
-    write_blocked_outputs(f"missing_dependency:{error.name}")
+except Exception as error:
+    if isinstance(error, ModuleNotFoundError):
+        write_blocked_outputs(f"missing_dependency:{error.name}")
+    else:
+        write_blocked_outputs(f"runtime_import_failed:{type(error).__name__}")
     raise SystemExit(0)
 
 BASE = os.environ.get("ROUND1_MODEL_ID", "Qwen/Qwen2.5-Coder-7B-Instruct")
 ADAPTER = f"models/{os.environ.get('ROUND1_RUN_NAME', 'round1-qwen25coder-7b-instruct-qlora')}/final"
 
-tokenizer = AutoTokenizer.from_pretrained(ADAPTER)
-base_model = AutoModelForCausalLM.from_pretrained(BASE, device_map="auto", torch_dtype="auto")
-model = PeftModel.from_pretrained(base_model, ADAPTER)
+try:
+    tokenizer = AutoTokenizer.from_pretrained(ADAPTER)
+    base_model = AutoModelForCausalLM.from_pretrained(BASE, device_map="auto", torch_dtype="auto")
+    model = PeftModel.from_pretrained(base_model, ADAPTER)
+except Exception as error:
+    write_blocked_outputs(f"model_load_failed:{type(error).__name__}")
+    raise SystemExit(0)
 
 
 def run(source_path: str, target_path: str):

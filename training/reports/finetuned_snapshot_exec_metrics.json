@@ -1,0 +1,7 @@
+{
+  "status": "blocked",
+  "mode": "finetuned",
+  "reason": "runtime_import_failed:ImportError",
+  "predictionsPath": "reports/finetuned_snapshot_predictions.jsonl",
+  "evalExamples": 50
+}
