@@ -5,6 +5,23 @@ Round 1 execution target: Ubuntu with NVIDIA CUDA.
 Before launching training on the Ubuntu machine, run:
 `cd training && source .venv310/bin/activate && set -a && source config/round1.env && set +a && python3 scripts/checkCudaEnvironment.py`
 
+## RCA-Informed Execution Contract
+
+This plan incorporates cumulative learnings from RCA files in `training/rca/`.
+
+- RCA-first retries are mandatory:
+  - if any stage fails, create a new RCA in `training/rca/` before editing this plan or retrying
+  - review all existing RCA files before choosing a remediation path
+- Commit discipline is mandatory:
+  - commit at the end of every stage before moving to the next stage
+- Host/runtime routing is mandatory:
+  - CUDA-heavy stages run on `odin1` (Ubuntu + NVIDIA)
+  - avoid local Mac execution for CUDA/model-heavy stages with known OpenMP/runtime mismatch risk
+- Odin1 execution defaults:
+  - preserve single-process launch where required (`--num_processes 1`)
+  - apply low-VRAM profiles by default when model workloads approach 12GB-class GPU limits
+  - use `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` for memory-fragmentation mitigation
+
 Plan status:
 - `[ ]` Step 1: Lock the `training/` workspace and Python runtime
 - `[ ]` Step 2: Inventory regressionproof snapshot sources from `~/.regressionproof`
@@ -43,6 +60,8 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.round1.txt
+bash -n scripts/verifyTrainingRoot.sh
+sha256sum scripts/verifyTrainingRoot.sh
 bash scripts/verifyTrainingRoot.sh
 ```
 
@@ -96,9 +115,15 @@ export HF_HOME="$PWD/tmp/hf"
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-EXPECTED="/Users/taylorromero/Development/SpruceLabs/regressionproof/training"
 ACTUAL="$(pwd)"
-test "$ACTUAL" = "$EXPECTED"
+EXPECTED_OVERRIDE="${EXPECTED_TRAINING_ROOT:-}"
+MAC_ROOT="/Users/taylorromero/Development/SpruceLabs/regressionproof/training"
+ODIN_ROOT="/home/odin/Development/SpruceLabs/regressionproof/training"
+if [ -n "$EXPECTED_OVERRIDE" ]; then
+  test "$ACTUAL" = "$EXPECTED_OVERRIDE"
+else
+  test "$ACTUAL" = "$MAC_ROOT" || test "$ACTUAL" = "$ODIN_ROOT"
+fi
 echo "training root verified: $ACTUAL"
 ```
 
@@ -112,14 +137,18 @@ Files to add:
 
 ```python
 import json
+import os
 import subprocess
 from pathlib import Path
 
-root = Path.home() / ".regressionproof"
+root = Path(os.environ.get("ROUND1_SNAPSHOT_ROOT", str(Path.home() / ".regressionproof")))
 rows = []
 
 def git(cwd: Path, *args: str) -> str:
     return subprocess.check_output(["git", *args], cwd=cwd, text=True).strip()
+
+if not root.exists():
+    raise SystemExit(f"snapshot root not found: {root}")
 
 for project_path in sorted([p for p in root.iterdir() if p.is_dir()]):
     mirror_path = project_path / "mirror"
@@ -158,6 +187,10 @@ Commands:
 ```bash
 cd /Users/taylorromero/Development/SpruceLabs/regressionproof/training
 source .venv/bin/activate
+set -a
+source config/round1.env
+set +a
+test -d "$ROUND1_SNAPSHOT_ROOT"
 python3 scripts/inventorySnapshots.py
 cat data/raw/snapshot_projects.json
 ```
@@ -706,16 +739,35 @@ Requirements:
 - baseline micro-step predictions must be evaluated as next-diff actions on ordered trajectories
 - baseline snapshot predictions must feed into execution-based evaluation
 - doc predictions can use a text or structured scoring pass separately
+- Step 9 baseline inference must run on `odin1` (Ubuntu NVIDIA), not on local Mac host
+- baseline inference must use a low-VRAM profile and allocator mitigation
+- baseline generation must be env-configurable (token cap) and OOM-safe per example
+
+`training/scripts/runBaseline.py` execution hardening requirements:
+- add `ROUND1_BASELINE_MAX_NEW_TOKENS` env control (default `256` on odin1 fallback profile)
+- keep deterministic generation (`do_sample=False`)
+- catch `torch.OutOfMemoryError` per eval row and emit blocked prediction rows instead of aborting the whole stage
+- persist partial progress safely as each row is processed
+- write a machine-readable failure reason for blocked rows (e.g., `generation_failed:OutOfMemoryError`)
 
 Commands:
 
 ```bash
-cd /Users/taylorromero/Development/SpruceLabs/regressionproof/training
-source .venv/bin/activate
-python3 scripts/runBaseline.py
+sshpass -p 'password' ssh -o StrictHostKeyChecking=no odin@odin1.local "
+cd /home/odin/Development/SpruceLabs/regressionproof/training
+source .venv310/bin/activate
+set -a
+source config/round1.env
+set +a
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export OMP_NUM_THREADS=1
+export MKL_NUM_THREADS=1
+export ROUND1_BASELINE_MAX_NEW_TOKENS=256
+python3 scripts/runBaseline.py | tee logs/step9-runBaseline.log
 python3 scripts/runMicroStepEval.py
 python3 scripts/runSnapshotEval.py
 wc -l reports/baseline_snapshot_predictions.jsonl reports/baseline_doc_predictions.jsonl
+"
 ```
 
 ## Step 10: Fine-tune the first model with QLoRA
