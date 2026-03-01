@@ -29,6 +29,7 @@ except ModuleNotFoundError as error:
     raise SystemExit(0)
 
 MODEL_ID, LOCAL_FILES_ONLY = resolve_model_source()
+MAX_NEW_TOKENS = int(os.environ.get("ROUND1_BASELINE_MAX_NEW_TOKENS", "256"))
 try:
     tokenizer = AutoTokenizer.from_pretrained(MODEL_ID, local_files_only=LOCAL_FILES_ONLY)
     model = AutoModelForCausalLM.from_pretrained(
@@ -52,24 +53,31 @@ def run(source_path: str, target_path: str):
                 add_generation_prompt=True,
             )
             inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-            outputs = model.generate(
-                **inputs,
-                max_new_tokens=800,
-                do_sample=False,
-                temperature=0.0,
-            )
-            text = tokenizer.decode(
-                outputs[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True
-            )
-            dst.write(
-                json.dumps(
-                    {
-                        "kind": row["kind"],
-                        "prediction": text,
-                        "target": row["messages"][2]["content"],
-                    }
+            try:
+                outputs = model.generate(
+                    **inputs,
+                    max_new_tokens=MAX_NEW_TOKENS,
+                    do_sample=False,
                 )
-                + "\n"
+                text = tokenizer.decode(
+                    outputs[0][inputs["input_ids"].shape[1] :], skip_special_tokens=True
+                )
+                payload = {
+                    "kind": row["kind"],
+                    "prediction": text,
+                    "target": row["messages"][2]["content"],
+                }
+            except torch.OutOfMemoryError:
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                payload = {
+                    "kind": row["kind"],
+                    "status": "blocked",
+                    "reason": "generation_failed:OutOfMemoryError",
+                    "target": row["messages"][2]["content"],
+                }
+            dst.write(
+                json.dumps(payload) + "\n"
             )
 
 

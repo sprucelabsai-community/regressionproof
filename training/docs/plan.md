@@ -744,11 +744,13 @@ Requirements:
 - baseline generation must be env-configurable (token cap) and OOM-safe per example
 
 `training/scripts/runBaseline.py` execution hardening requirements:
-- add `ROUND1_BASELINE_MAX_NEW_TOKENS` env control (default `256` on odin1 fallback profile)
+- add `ROUND1_BASELINE_MAX_NEW_TOKENS` env control (default `64` on odin1 fallback profile)
 - keep deterministic generation (`do_sample=False`)
 - catch `torch.OutOfMemoryError` per eval row and emit blocked prediction rows instead of aborting the whole stage
 - persist partial progress safely as each row is processed
 - write a machine-readable failure reason for blocked rows (e.g., `generation_failed:OutOfMemoryError`)
+- emit periodic progress signals for long runs (e.g., unbuffered output and/or row counters)
+- if Step 9 retry strategy changes after a failed attempt, write a new RCA first, then update plan, then retry
 
 Commands:
 
@@ -762,7 +764,8 @@ set +a
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
-export ROUND1_BASELINE_MAX_NEW_TOKENS=256
+export ROUND1_BASELINE_MAX_NEW_TOKENS=64
+export PYTHONUNBUFFERED=1
 python3 scripts/runBaseline.py | tee logs/step9-runBaseline.log
 python3 scripts/runMicroStepEval.py
 python3 scripts/runSnapshotEval.py
