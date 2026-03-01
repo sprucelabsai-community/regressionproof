@@ -4,85 +4,70 @@ Date (UTC): 2026-03-01
 Host: `odin1`
 Ollama service endpoint: `http://127.0.0.1:6006`
 Tunnel endpoint: `https://storybook.expo-analytics.com`
-Merged model source dir:
-`/home/odin/Development/SpruceLabs/regressionproof/training/models/round1-qwen25coder-7b-instruct-qlora-fallback/merged`
 
-## Step 1: Register merged model with Ollama
+## Root Cause
 
-Registration command executed against the active service model store:
+- Merged HF safetensors model (`Qwen2ForCausalLM`) was registered as `regressionproof-round1-merged:latest`.
+- On Ubuntu/CUDA `odin1`, Ollama attempted `starting mlx runner subprocess` for that model and failed with:
+  - `mlx runner failed: Error: unsupported architecture: Qwen2ForCausalLM`
+- This was a model-format mismatch between the merged artifact and the available CUDA/llama runtime path.
 
-```bash
-sudo OLLAMA_MODELS=/usr/share/ollama/.ollama/models \
-  OLLAMA_HOST=127.0.0.1:6006 \
-  ollama create regressionproof-round1-merged --experimental \
-  -f /home/odin/Development/SpruceLabs/regressionproof/training/deploy/ollama/Modelfile.round1.merged
-```
+## Resolution Applied
 
-Result:
-- `regressionproof-round1-merged:latest` manifest created under service store.
-- Confirmed in `/usr/share/ollama/.ollama/models/manifests/.../regressionproof-round1-merged/latest`.
-
-## Step 2: Confirm reachable by URL and model name
-
-Checks performed:
+1. Converted merged model to GGUF on `odin1` using `llama.cpp`:
 
 ```bash
-curl http://127.0.0.1:6006/api/tags
-curl http://127.0.0.1:6006/v1/models
-curl https://storybook.expo-analytics.com/api/tags
+source /home/odin/Development/SpruceLabs/regressionproof/training/.venv310/bin/activate
+python /home/odin/Development/SpruceLabs/regressionproof/training/tmp/llama.cpp/convert_hf_to_gguf.py \
+  /home/odin/Development/SpruceLabs/regressionproof/training/models/round1-qwen25coder-7b-instruct-qlora-fallback/merged \
+  --outtype q8_0 \
+  --use-temp-file \
+  --outfile /home/odin/Development/SpruceLabs/regressionproof/training/models/round1-qwen25coder-7b-instruct-qlora-fallback/gguf/round1-merged-q8_0.gguf
 ```
 
-Result:
-- Model name is listed in all of the above responses:
-  - `regressionproof-round1-merged:latest`
-- URL and registry visibility checks pass.
+2. Registered GGUF model in Ollama:
+- `regressionproof-round1-gguf-q8:latest`
+- `regressionproof-round1-gguf-q8-chatfix:latest`
 
-## Step 3: Test model output for TDD principles
+3. Added deployment Modelfiles:
+- `training/deploy/ollama/Modelfile.round1.gguf.q8`
+- `training/deploy/ollama/Modelfile.round1.gguf.q8.chatfix`
 
-Inference checks performed:
+## Validation Results
 
-```bash
-curl http://127.0.0.1:6006/api/generate ... model=regressionproof-round1-merged:latest
-curl http://127.0.0.1:6006/v1/chat/completions ... model=regressionproof-round1-merged:latest
-```
+### Backend / Runner
 
-Result:
-- Inference fails at runtime, so TDD-content output could not be validated.
-- Error returned by both native and OpenAI-compatible APIs:
+- `journalctl -u ollama` shows `llama runner started` for GGUF model loads.
+- No `mlx runner failed` for `regressionproof-round1-gguf-q8*`.
 
-```text
-mlx runner failed: Error: unsupported architecture: Qwen2ForCausalLM (exit: exit status 1)
-```
+### Reachability by URL and Name
 
-## Step 4: Confirm pluggability into VS Code and compatible coding agents
+- Local model discovery:
+  - `http://127.0.0.1:6006/api/tags`
+  - `http://127.0.0.1:6006/v1/models`
+- Tunnel model discovery:
+  - `https://storybook.expo-analytics.com/v1/models`
+- Model names present:
+  - `regressionproof-round1-gguf-q8:latest`
+  - `regressionproof-round1-gguf-q8-chatfix:latest`
 
-Compatibility checks:
-- OpenAI-compatible discovery endpoint works:
-  - `/v1/models` lists `regressionproof-round1-merged:latest`
-- Native discovery endpoint works:
-  - `/api/tags` lists `regressionproof-round1-merged:latest`
+### Runtime Metadata
 
-Limitation:
-- Chat/completions calls fail with the runtime architecture error above.
-- Practical pluggability for coding agents is blocked until inference runtime is fixed.
+`/api/ps` reported active model details:
+- `format: gguf`
+- `family: qwen2`
+- `quantization_level: Q8_0`
+- `size_vram: 8067160064` (~8.1 GB)
 
-## Additional attempt: Quantized fallback registration
+### Inference Status
 
-Attempted:
+- GGUF model inference works via native and OpenAI-compatible endpoints.
+- `regressionproof-round1-gguf-q8-chatfix:latest` returns non-empty responses over `/v1/chat/completions`.
+- Original merged safetensors model remains incompatible on this host and still fails with MLX runner.
 
-```bash
-sudo OLLAMA_MODELS=/usr/share/ollama/.ollama/models \
-  OLLAMA_HOST=127.0.0.1:6006 \
-  ollama create regressionproof-round1-merged-q4 --experimental --quantize q4_K_M \
-  -f /home/odin/Development/SpruceLabs/regressionproof/training/deploy/ollama/Modelfile.round1.merged
-```
+## Stage Conclusion
 
-Result:
-- Create path crashed with `SIGSEGV` in Ollama quantization path.
-- `regressionproof-round1-merged-q4` not registered.
-
-## Stage conclusion
-
-- Registration and URL/name reachability: **PASS**
-- TDD output validation: **BLOCKED** by Ollama runtime incompatibility
-- VS Code/coding-agent pluggability: **PARTIAL** (discovery works, inference blocked)
+- CUDA-compatible backend selection: **PASS**
+- URL/name reachability: **PASS**
+- Inference execution on odin1: **PASS**
+- TDD-principle quality of outputs: **IN PROGRESS** (model now inferencing; prompt/content quality tuning continues)
