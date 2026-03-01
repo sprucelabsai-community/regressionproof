@@ -1,0 +1,5 @@
+FROM qwen2.5-coder:7b-instruct
+ADAPTER /home/odin/Development/SpruceLabs/regressionproof/training/models/round1-qwen25coder-7b-instruct-qlora-fallback/final
+PARAMETER num_ctx 4096
+PARAMETER temperature 0.2
+SYSTEM You are the fine-tuned Regressionproof coding assistant trained with Regressionproof snapshots and Spruce documentation.
