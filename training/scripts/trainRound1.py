@@ -11,6 +11,13 @@ def resolve_model_source():
     return model_source, Path(model_source).exists()
 
 
+def env_flag(name: str, default: bool) -> bool:
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 def write_blocked_output(reason: str, detail: str | None = None):
     output_dir = Path("models") / os.environ.get("ROUND1_RUN_NAME", "round1-qwen25coder-7b-instruct-qlora")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -29,15 +36,25 @@ def load_split(path: str):
     return rows
 
 
-def resolve_training_backend(torch_module):
+def resolve_training_backend(torch_module, use_quantization: bool):
     if not torch_module.cuda.is_available():
         raise RuntimeError("Round 1 training requires Ubuntu with CUDA.")
 
+    if use_quantization:
+        return {
+            "device_map": "auto",
+            "torch_dtype": torch_module.bfloat16,
+            "use_quantization": True,
+            "training_precision": {"bf16": True, "fp16": False},
+            "attn_implementation": "sdpa",
+            "gradient_checkpointing": True,
+        }
+
     return {
-        "device_map": "auto",
-        "torch_dtype": torch_module.bfloat16,
-        "use_quantization": True,
-        "training_precision": {"bf16": True, "fp16": False},
+        "device_map": None,
+        "torch_dtype": torch_module.float16,
+        "use_quantization": False,
+        "training_precision": {"bf16": False, "fp16": True},
         "attn_implementation": "sdpa",
         "gradient_checkpointing": True,
     }
@@ -63,8 +80,9 @@ except Exception as error:
 
 MODEL_ID, LOCAL_FILES_ONLY = resolve_model_source()
 RUN_NAME = os.environ.get("ROUND1_RUN_NAME", "round1-qwen25coder-7b-instruct-qlora")
+USE_QLORA = env_flag("ROUND1_USE_QLORA", True)
 try:
-    BACKEND = resolve_training_backend(torch)
+    BACKEND = resolve_training_backend(torch, USE_QLORA)
 except Exception as error:
     write_blocked_output(f"unsupported_training_backend:{type(error).__name__}", traceback.format_exc())
     raise SystemExit(0)
@@ -111,11 +129,12 @@ dataset = dataset.map(
 
 try:
     model_kwargs = {
-        "device_map": BACKEND["device_map"],
         "torch_dtype": BACKEND["torch_dtype"],
         "local_files_only": LOCAL_FILES_ONLY,
         "attn_implementation": BACKEND.get("attn_implementation", "sdpa"),
     }
+    if BACKEND["device_map"] is not None:
+        model_kwargs["device_map"] = BACKEND["device_map"]
 
     if BACKEND["use_quantization"]:
         model_kwargs["quantization_config"] = BitsAndBytesConfig(

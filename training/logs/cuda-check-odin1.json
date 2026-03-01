@@ -1,0 +1,22 @@
+{
+  "status": "ok",
+  "cwd": "/home/odin/Development/SpruceLabs/regressionproof/training",
+  "cuda_available": true,
+  "device_count": 1,
+  "devices": [
+    "NVIDIA GeForce RTX 4070"
+  ],
+  "cuda_version": "12.4",
+  "torch_version": "2.5.1+cu124",
+  "bitsandbytes_installed": true,
+  "hf_home": "/home/odin/Development/SpruceLabs/regressionproof/training/tmp/hf",
+  "round1_model_source": "Qwen/Qwen2.5-Coder-7B-Instruct",
+  "has_train_split": true,
+  "has_val_split": true,
+  "has_test_split": true,
+  "has_snapshot_eval": true,
+  "has_doc_eval": true,
+  "has_micro_step_eval": true,
+  "has_round1_env": true,
+  "has_accelerate_config": true
+}
