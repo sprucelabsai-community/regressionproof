@@ -21,6 +21,7 @@ Plan status:
 - `[ ]` Step 13: Export the trained model into a serving-ready artifact
 - `[ ]` Step 14: Host the model behind a URL with an OpenAI-compatible API
 - `[ ]` Step 15: Register the served model by name and route requests to it
+- `[ ]` Step 16: Remediate tunnel-output contamination and truncation, then re-validate TDD three-law behavior
 
 ## Step 1: Lock the `training/` workspace and Python runtime
 
@@ -1192,6 +1193,82 @@ Deployment gate:
 - Step 13 must produce a serving manifest with `status: "ready"` before Step 14 is considered ready
 - Step 14 must answer `GET /v1/models` and `POST /v1/chat/completions`
 - Step 15 must resolve `model: "round1-tdd-coder"` to the correct upstream URL without changing client payload shape
+
+## Step 16: Remediate contamination/truncation from validation and re-run TDD quality gate
+
+Observed from failed validation run:
+- Responses were contaminated with snapshot and diff metadata (`PROJECT`, `SNAPSHOT_ROOT`, `MIRROR_STATE`, diff fragments) instead of focused TDD answers.
+- Responses were frequently truncated with `finish_reason: "length"` during tunnel calls.
+
+RCA review (required precondition for this step):
+- RCA document created first in `training/rca/`:
+  - `training/rca/2026-03-01-tdd-output-contamination-and-truncation.md`
+- All existing RCA files in `training/rca/` must be reviewed before any plan edits or retraining retries.
+- Cumulative pattern (current set): output-format drift toward telemetry/diff artifacts plus completion truncation under tunnel validation prompts.
+
+Files to add or modify:
+- `training/scripts/buildRound1Dataset.py` (or extraction scripts) to enforce stricter assistant-target hygiene
+- `training/scripts/runFinetunedEval.py` to add contamination/truncation metrics
+- `training/deploy/ollama/Modelfile.round1.gguf.q8.chatfix` to enforce compact response behavior
+- `training/reports/tdd_principles_output_validation_*.md` for post-fix evidence
+
+Remediation requirements:
+- Add dataset hygiene filters so assistant targets do not include non-answer telemetry patterns such as:
+  - `PROJECT:`
+  - `SNAPSHOT_ROOT:`
+  - `MIRROR_PATH:`
+  - `MIRROR_STATE:`
+  - raw `diff --git` headers when the task expects direct guidance output
+- Add training-time style constraints in system/user examples requiring:
+  - direct answer-first format
+  - no preamble metadata blocks
+  - bounded response length for simple coding prompts
+- Tighten serving template and generation defaults for tunnel inference:
+  - explicit stop tokens for Qwen chat markers
+  - lower `num_predict` / `max_tokens` defaults for concise tasks
+  - low-temperature deterministic output for evaluation probes
+- Extend evaluation with two explicit quality gates:
+  - `contamination_rate`: percent of outputs containing telemetry/diff artifact patterns
+  - `truncation_rate`: percent of outputs ending with `finish_reason: "length"`
+- TDD gate for this step is PASS only when:
+  - contamination rate is reduced to near-zero on the held-out TDD prompt set
+  - truncation rate is reduced to near-zero on the same set
+  - responses satisfy all three laws in rubric scoring:
+    - failing test first
+    - minimal production code to pass
+    - refactor only after passing tests
+
+Process gate for future failures:
+- If any validation stage fails, create a new RCA file in `training/rca/` before updating this plan or rerunning training/deployment.
+- RCA filename format: `YYYY-MM-DD-short-description.md`.
+
+Commands:
+
+```bash
+cd /Users/taylorromero/Development/SpruceLabs/regressionproof/training
+source .venv310/bin/activate
+set -a
+source config/round1.env
+set +a
+python3 scripts/buildRound1Dataset.py
+python3 scripts/trainRound1.py
+python3 scripts/runFinetunedEval.py
+```
+
+Validation commands (tunnel):
+
+```bash
+curl -sS https://storybook.expo-analytics.com/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "model": "regressionproof-round1-gguf-q8-chatfix:latest",
+    "messages": [
+      {"role": "user", "content": "Write a tiny function add(a,b) using strict TDD by the three laws. Format exactly as Red, Green, Refactor."}
+    ],
+    "temperature": 0,
+    "max_tokens": 300
+  }'
+```
 
 ## Guardrail coverage
 
