@@ -843,7 +843,7 @@ python3 scripts/checkCudaEnvironment.py
 set -a
 source config/round1.env
 set +a
-accelerate launch --config_file config/accelerate.yaml scripts/trainRound1.py | tee logs/round1-train.log
+accelerate launch --num_processes 1 --config_file config/accelerate.yaml scripts/trainRound1.py | tee logs/round1-train.log
 ```
 
 ## Step 11: Run post-train execution evaluation and compare against baseline
