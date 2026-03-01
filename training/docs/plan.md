@@ -843,6 +843,14 @@ python3 scripts/checkCudaEnvironment.py
 set -a
 source config/round1.env
 set +a
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+# odin1 low-VRAM fallback profile (required if default profile OOMs)
+export ROUND1_USE_QLORA=true
+export ROUND1_RUN_NAME=round1-qwen25coder-7b-instruct-qlora-fallback
+export ROUND1_MAX_SEQ_LEN=1024
+export ROUND1_MICRO_BATCH=1
+export ROUND1_GRAD_ACCUM=32
+export ROUND1_TRAIN_EPOCHS=1
 accelerate launch --num_processes 1 --config_file config/accelerate.yaml scripts/trainRound1.py | tee logs/round1-train.log
 ```
 
