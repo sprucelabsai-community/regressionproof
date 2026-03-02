@@ -1299,8 +1299,11 @@ Remediation requirements:
 - Extend evaluation with two explicit quality gates:
   - `contamination_rate`: percent of outputs containing telemetry/diff artifact patterns
   - `truncation_rate`: percent of outputs ending with `finish_reason: "length"`
+  - `empty_or_non_actionable_rate`: percent of outputs that are blank/whitespace or not actionable for the requested TDD step
 - Add a frozen odin1 TDD validation suite under `training/reports/`:
-  - run a fixed set of strict TDD probes against `regressionproof-round1-gguf-q8-chatfix:latest`
+  - run a fixed set of strict TDD probes against both:
+    - `regressionproof-round1-gguf-q8-chatfix:latest`
+    - `regressionproof-round1-gguf-q8:latest`
   - store raw request/response payloads for each scenario
   - score each scenario against law-specific checks (`law1`, `law2`, `law3`)
 - Add an operational throughput guard for validation probes:
@@ -1311,10 +1314,12 @@ Remediation requirements:
 - TDD gate for this step is PASS only when:
   - contamination rate is reduced to near-zero on the held-out TDD prompt set
   - truncation rate is reduced to near-zero on the same set
+  - empty/non-actionable rate is reduced to near-zero on the same set
   - responses satisfy all three laws in rubric scoring:
     - failing test first
     - minimal production code to pass
     - refactor only after passing tests
+  - at least one deployed serving variant passes all gates; otherwise release is blocked
 
 Process gate for future failures:
 - If any validation stage fails, create a new RCA file in `training/rca/` before updating this plan or rerunning training/deployment.
@@ -1385,6 +1390,10 @@ print('wrote reports/tdd_validation_odin1_latest.json')
 PY
 "
 ```
+
+Retry rule after dual-variant failure:
+- if chatfix fails contamination/truncation and non-chatfix fails empty/non-actionable output, do not promote either variant.
+- record RCA, update plan, and return to dataset/training remediation before the next serving validation attempt.
 
 ## Guardrail coverage
 
