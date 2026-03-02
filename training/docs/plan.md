@@ -1290,9 +1290,24 @@ Remediation requirements:
   - explicit stop tokens for Qwen chat markers
   - lower `num_predict` / `max_tokens` defaults for concise tasks
   - low-temperature deterministic output for evaluation probes
+- Add a model-variant validation branch for odin1:
+  - run the frozen TDD probe suite against both:
+    - `regressionproof-round1-gguf-q8-chatfix:latest`
+    - `regressionproof-round1-gguf-q8:latest`
+  - promote only the variant that passes all gates
+  - if both fail, block release and require dataset/finetune remediation before further retries
 - Extend evaluation with two explicit quality gates:
   - `contamination_rate`: percent of outputs containing telemetry/diff artifact patterns
   - `truncation_rate`: percent of outputs ending with `finish_reason: "length"`
+- Add a frozen odin1 TDD validation suite under `training/reports/`:
+  - run a fixed set of strict TDD probes against `regressionproof-round1-gguf-q8-chatfix:latest`
+  - store raw request/response payloads for each scenario
+  - score each scenario against law-specific checks (`law1`, `law2`, `law3`)
+- Add an operational throughput guard for validation probes:
+  - prefer concise generation caps (e.g., `num_predict` <= `220` and lower for retry probes)
+  - for contamination-heavy variants, cap retry probes at `num_predict` <= `80`
+  - use deterministic decoding (`temperature=0`)
+  - record per-scenario `done_reason` and fail on truncation
 - TDD gate for this step is PASS only when:
   - contamination rate is reduced to near-zero on the held-out TDD prompt set
   - truncation rate is reduced to near-zero on the same set
@@ -1331,6 +1346,44 @@ curl -sS https://storybook.expo-analytics.com/v1/chat/completions \
     "temperature": 0,
     "max_tokens": 300
   }'
+```
+
+Validation commands (odin1 local Ollama, preferred):
+
+```bash
+sshpass -p 'password' ssh -o StrictHostKeyChecking=no odin@odin1.local "
+cd /home/odin/Development/SpruceLabs/regressionproof/training
+python3 - <<'PY'
+import json, urllib.request
+from pathlib import Path
+
+url = 'http://127.0.0.1:6006/api/chat'
+model = 'regressionproof-round1-gguf-q8-chatfix:latest'
+scenarios = [
+  {'id':'law1_next_step', 'prompt':'Strict TDD. Missing add(a,b). Return only the next minimal failing test.'},
+  {'id':'law3_next_step', 'prompt':'Given failing test for add(a,b), return only minimal production code to pass.'},
+  {'id':'full_three_laws', 'prompt':'Strict TDD for isEven(n). Format Red, Green, Refactor with minimal steps.'}
+]
+rows = []
+for s in scenarios:
+  body = {
+    'model': model,
+    'stream': False,
+    'options': {'temperature': 0, 'num_predict': 160},
+    'messages': [{'role':'user','content': s['prompt']}],
+  }
+  req = urllib.request.Request(url, data=json.dumps(body).encode(), headers={'Content-Type':'application/json'})
+  with urllib.request.urlopen(req, timeout=900) as r:
+    resp = json.loads(r.read().decode())
+  rows.append({
+    'id': s['id'],
+    'done_reason': resp.get('done_reason'),
+    'response': resp.get('message', {}).get('content', ''),
+  })
+Path('reports/tdd_validation_odin1_latest.json').write_text(json.dumps(rows, indent=2))
+print('wrote reports/tdd_validation_odin1_latest.json')
+PY
+"
 ```
 
 ## Guardrail coverage
