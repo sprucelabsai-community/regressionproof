@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.9.2](https://github.com/sprucelabsai-community/regressionproof/compare/v0.9.1...v0.9.2) (2026-03-02)
+
+
+### Features
+
+* add round 1 baseline, training, and packaging scripts ([5cfce7d](https://github.com/sprucelabsai-community/regressionproof/commit/5cfce7d))
+* add round 1 blocked execution outputs and package ([8885c48](https://github.com/sprucelabsai-community/regressionproof/commit/8885c48))
+* add round 1 evaluation scaffolding and eval sets ([7e8fcec](https://github.com/sprucelabsai-community/regressionproof/commit/7e8fcec))
+* add round 1 extraction scripts and staging corpora ([a5cb0b6](https://github.com/sprucelabsai-community/regressionproof/commit/a5cb0b6))
+* add round 1 normalized dataset and splits ([33d35cb](https://github.com/sprucelabsai-community/regressionproof/commit/33d35cb))
+* add round 1 training research and inventory setup ([89a18e3](https://github.com/sprucelabsai-community/regressionproof/commit/89a18e3))
+* add Spruce TDD fine-tuning POC stage plan ([1d8c4d4](https://github.com/sprucelabsai-community/regressionproof/commit/1d8c4d4))
+* extend round 1 plan with deployment and serving stages ([c3a8916](https://github.com/sprucelabsai-community/regressionproof/commit/c3a8916))
+
+
+
+
+
 ## [0.9.1](https://github.com/sprucelabsai-community/regressionproof/compare/v0.9.0...v0.9.1) (2026-02-05)
 
 **Note:** Version bump only for package regressionproof
