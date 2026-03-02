@@ -55,3 +55,10 @@ yarn.lock
 package-lock.json
 
 **/.spruce/*cache.json
+
+# Training artifacts too large for git remote limits
+training/data/staging/snapshot_examples.ndjson
+training/data/staging/micro_step_examples.ndjson
+training/data/normalized/round1.sft.jsonl
+training/data/splits/train.jsonl
+training/models/
