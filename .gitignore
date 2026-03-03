@@ -62,3 +62,7 @@ training/data/staging/micro_step_examples.ndjson
 training/data/normalized/round1.sft.jsonl
 training/data/splits/train.jsonl
 training/models/
+
+# Local training virtualenvs and transient validation artifacts
+training/.venv*/
+training/reports/.tmp_*
